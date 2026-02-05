@@ -6,4 +6,6 @@ export interface ProductType {
     desc: string;
     image: string;
     qty?: number
+    stock?: number
+    status_stock?: boolean
 }
