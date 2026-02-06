@@ -37,7 +37,7 @@ const LayoutStore = ({ children, setSearchQuery, searchQuery }: { children: Reac
     return (
         <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
             {/* Header Section */}
-            <header className="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm">
+            <header className="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-sm">
                 <div className="max-w-screen-md mx-auto px-4 py-4">
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
@@ -52,10 +52,7 @@ const LayoutStore = ({ children, setSearchQuery, searchQuery }: { children: Reac
                             </div>
                         </div>
                         <div className="flex gap-2">
-                            <button className="p-2 bg-slate-100 rounded-full text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <Search size={20} />
-                            </button>
-                            <button className="p-2 bg-slate-100 rounded-full text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                            <button onClick={() => route.push('/products')} className="p-2 bg-slate-100 rounded-full text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
                                 <ShoppingBag size={20} />
                             </button>
                         </div>

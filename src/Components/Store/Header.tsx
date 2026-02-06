@@ -1,5 +1,6 @@
 import { CategorieType } from '@/types/CategorieProduct'
 import { Search, ShoppingBag } from 'lucide-react'
+import { useRouter } from 'next/router';
 import React, { useState } from 'react'
 
 type Props = {
@@ -7,7 +8,7 @@ type Props = {
 }
 
 const HeaderStore = ({ categories }: Props) => {
-
+    const route = useRouter();
     const [activeTab, setActiveTab] = useState<string>('Coffee');
     const scrollToCategory = (name: string) => {
         setActiveTab(name);
@@ -28,7 +29,7 @@ const HeaderStore = ({ categories }: Props) => {
     return (
         <header className="sticky top-0 z-40 bg-slate-100 backdrop-blur-lg border-b border-neutral-100">
             <div className="max-w-screen-md mx-auto px-4 py-3 flex justify-between items-center">
-                <div className="flex flex-col">
+                <div className="flex flex-col cursor-pointer" onClick={() => route.push('/')}>
                     <h1 className="text-lg font-extrabold tracking-tight text-emerald-900 leading-none">
                         PURE<span className="font-light text-neutral-400">EATS</span>
                     </h1>
