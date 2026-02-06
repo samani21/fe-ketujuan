@@ -8,7 +8,6 @@ import {
     Loader2,
     Eye,
     EyeOff,
-    ChevronLeft
 } from 'lucide-react';
 import Link from 'next/link';
 type RegisterForm = {
