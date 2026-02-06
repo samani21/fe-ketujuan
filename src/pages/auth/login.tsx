@@ -15,7 +15,7 @@ type RegisterForm = {
     identifier: string;
 };
 
-const App = () => {
+const LoginPage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -173,4 +173,4 @@ const App = () => {
     );
 };
 
-export default App;
+export default LoginPage;
