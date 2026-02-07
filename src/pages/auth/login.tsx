@@ -46,7 +46,7 @@ const LoginPage = () => {
                     <div className="flex justify-center mb-8">
                         <div className="animate-pulse">
                             {/* <Zap className="text-white w-10 h-10" fill="white" /> */}
-                            <img src={'/ketujuan.png'} className='w-52' />
+                            <img src={'/katujuan.png'} className='w-52' />
                         </div>
                     </div>
 
@@ -82,7 +82,7 @@ const LoginPage = () => {
             <div className="w-full lg:w-1/2 flex items-center justify-center p-6  md:p-12 lg:p-20">
                 <div className="w-full ">
                     <div className="lg:hidden flex items-center gap-2 mt-[-60px]">
-                        <img src={'/ketujuan.png'} className='w-32' />
+                        <img src={'/katujuan.png'} className='w-32' />
                     </div>
 
                     <div className="mb-10 px-1 sm:px-0">
