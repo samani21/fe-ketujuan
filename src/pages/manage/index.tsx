@@ -70,24 +70,24 @@ export default function ProductManagement() {
                                             {product.category}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 font-black text-emerald-900 text-sm">
+                                    <td className="px-6 py-4 font-black text-blue-900 text-sm">
                                         Rp {product.price.toLocaleString('id-ID')}
                                     </td>
                                     <td className="px-6 py-4">
                                         {/* Toggle Switch */}
                                         <button
                                             onClick={() => handleToggleStock(product.id)}
-                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${product.status_stock ? 'bg-emerald-600' : 'bg-neutral-200'}`}
+                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${product.status_stock ? 'bg-[var(--primary-color)]' : 'bg-neutral-200'}`}
                                         >
                                             <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${product.status_stock ? 'translate-x-6' : 'translate-x-1'}`} />
                                         </button>
-                                        <span className={`ml-3 text-xs font-bold ${product.status_stock ? 'text-emerald-600' : 'text-neutral-400'}`}>
+                                        <span className={`ml-3 text-xs font-bold ${product.status_stock ? 'text-[var(--primary-color)]' : 'text-neutral-400'}`}>
                                             {product.status_stock ? 'Tersedia' : 'Habis'}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex items-center justify-end space-x-2">
-                                            <button className="p-2 text-neutral-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all">
+                                            <button className="p-2 text-neutral-400 hover:text-[var(--primary-color)] hover:bg-bblue-50 rounded-lg transition-all">
                                                 <Pencil size={18} />
                                             </button>
                                             <button

@@ -60,10 +60,10 @@ export default function Dashboard() {
                 <div className="bg-white rounded-[2rem] border border-neutral-100 shadow-sm overflow-hidden">
                     <div className="p-6 border-b border-neutral-50 flex items-center justify-between">
                         <div>
-                            <h3 className="text-lg font-bold">Pesanan Terbaru</h3>
+                            <h3 className="text-lg font-bold text-gray-600">Pesanan Terbaru</h3>
                             <p className="text-xs text-neutral-400">Daftar transaksi yang masuk hari ini</p>
                         </div>
-                        <button className="text-emerald-700 text-sm font-bold hover:underline">
+                        <button className="text-blue-700 text-sm font-bold hover:underline">
                             Lihat Semua
                         </button>
                     </div>
@@ -85,13 +85,13 @@ export default function Dashboard() {
                                     <tr key={order.id} className="hover:bg-neutral-50/50 transition-colors group">
                                         <td className="px-6 py-4 font-bold text-sm text-emerald-900">{order.id}</td>
                                         <td className="px-6 py-4">
-                                            <div className="text-sm font-semibold">{order.customer}</div>
+                                            <div className="text-sm font-semibold text-gray-600">{order.customer}</div>
                                             <div className="text-[10px] text-neutral-400">{order.date}</div>
                                         </td>
                                         <td className="px-6 py-4 text-sm text-neutral-500 hidden sm:table-cell max-w-xs truncate">
                                             {order.items}
                                         </td>
-                                        <td className="px-6 py-4 font-bold text-sm">{order.amount}</td>
+                                        <td className="px-6 py-4 font-bold text-sm text-[var(--primary-color)]">{order.amount}</td>
                                         <td className="px-6 py-4">
                                             <StatusBadge status={order.status} />
                                         </td>

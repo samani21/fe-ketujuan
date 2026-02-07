@@ -61,8 +61,8 @@ export default function SalesReport() {
                             <AreaChart data={salesData}>
                                 <defs>
                                     <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#064e3b" stopOpacity={0.1} />
-                                        <stop offset="95%" stopColor="#064e3b" stopOpacity={0} />
+                                        <stop offset="5%" stopColor="#1A2D5E" stopOpacity={0.1} />
+                                        <stop offset="95%" stopColor="#1A2D5E" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -86,7 +86,7 @@ export default function SalesReport() {
                                 <Area
                                     type="monotone"
                                     dataKey="sales"
-                                    stroke="#064e3b"
+                                    stroke="#1A2D5E"
                                     strokeWidth={3}
                                     fillOpacity={1}
                                     fill="url(#colorSales)"
@@ -129,7 +129,7 @@ export default function SalesReport() {
                                             <span className="text-sm text-neutral-600 italic font-medium">{trx.product}</span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="text-sm font-black text-emerald-900">
+                                            <span className="text-sm font-black text-blue-900">
                                                 Rp {trx.total.toLocaleString('id-ID')}
                                             </span>
                                         </td>
@@ -146,7 +146,7 @@ export default function SalesReport() {
                     </div>
 
                     <div className="p-6 bg-neutral-50/30 flex justify-center">
-                        <button className="text-sm font-bold text-neutral-400 hover:text-emerald-900 transition-colors">
+                        <button className="text-sm font-bold text-neutral-400 hover:text-blue-900 transition-colors">
                             Tampilkan Lebih Banyak
                         </button>
                     </div>

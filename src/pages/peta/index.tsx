@@ -65,7 +65,7 @@ const PetaPage = () => {
                         title: outlet.name,
                         icon: {
                             path: window.google.maps.SymbolPath.CIRCLE,
-                            fillColor: "#064e3b",
+                            fillColor: "#1A2D5E",
                             fillOpacity: 1,
                             strokeWeight: 2,
                             strokeColor: "#ffffff",
@@ -82,11 +82,11 @@ const PetaPage = () => {
                     marker.addListener("click", () => {
                         infoWindow.setContent(`
               <div style="padding: 8px; font-family: sans-serif; min-width: 150px;">
-                <h4 style="margin: 0 0 4px 0; color: #064e3b; font-size: 14px;">${outlet.name}</h4>
+                <h4 style="margin: 0 0 4px 0; color: #1A2D5E; font-size: 14px;">${outlet.name}</h4>
                 <p style="margin: 0 0 8px 0; font-size: 11px; color: #666;">${outlet.address}</p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                   <span style="font-size: 10px; font-weight: bold; color: ${outlet.status === 'Buka' ? '#059669' : '#e11d48'}">${outlet.status}</span>
-                  <a href="https://www.google.com/maps/dir/?api=1&destination=${outlet.coords.lat},${outlet.coords.lng}" target="_blank" style="text-decoration: none; color: #064e3b; font-size: 10px; font-weight: bold; border: 1px solid #064e3b; padding: 2px 6px; border-radius: 4px;">Rute</a>
+                  <a href="https://www.google.com/maps/dir/?api=1&destination=${outlet.coords.lat},${outlet.coords.lng}" target="_blank" style="text-decoration: none; color: #1A2D5E; font-size: 10px; font-weight: bold; border: 1px solid #1A2D5E; padding: 2px 6px; border-radius: 4px;">Rute</a>
                 </div>
               </div>
             `);
@@ -113,7 +113,7 @@ const PetaPage = () => {
                         <h3 className="font-extrabold text-xl text-slate-800 tracking-tight">Eksplorasi Peta</h3>
                         <p className="text-[11px] text-slate-500 font-medium">Temukan outlet Pondok Cokelat Hatta terdekat</p>
                     </div>
-                    <div className="bg-emerald-50 p-2 rounded-xl text-emerald-700">
+                    <div className="bg-blue-50 p-2 rounded-xl text-[var(--primary-color)]">
                         <Navigation size={20} />
                     </div>
                 </div>
@@ -121,28 +121,28 @@ const PetaPage = () => {
                 {GOOGLE_MAPS_API_KEY ? (
                     <GoogleMapView />
                 ) : (
-                    <div className="h-[300px] w-full bg-emerald-50 rounded-3xl border-2 border-dashed border-emerald-200 flex flex-col items-center justify-center p-8 text-center">
+                    <div className="h-[300px] w-full bg-blue-50 rounded-3xl border-2 border-dashed border-blue-200 flex flex-col items-center justify-center p-8 text-center">
                         <div className="p-4 bg-white rounded-full shadow-sm mb-4">
-                            <MapPin size={32} className="text-emerald-800" />
+                            <MapPin size={32} className="text-blue-800" />
                         </div>
-                        <h4 className="text-emerald-900 font-bold mb-2">API Key Diperlukan</h4>
-                        <p className="text-emerald-700/60 text-[11px] leading-relaxed">Mohon masukkan Google Maps API Key Anda ke dalam variabel <code className="bg-emerald-100 px-1 rounded">GOOGLE_MAPS_API_KEY</code> di bagian atas kode.</p>
+                        <h4 className="text-blue-900 font-bold mb-2">API Key Diperlukan</h4>
+                        <p className="text-[var(--primary-color)]/60 text-[11px] leading-relaxed">Mohon masukkan Google Maps API Key Anda ke dalam variabel <code className="bg-blue-100 px-1 rounded">GOOGLE_MAPS_API_KEY</code> di bagian atas kode.</p>
                     </div>
                 )}
                 <div className="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100">
                     <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 bg-emerald-800 text-white rounded-lg">
+                        <div className="p-2 bg-[var(--primary-color)] text-white rounded-lg">
                             <Info size={16} />
                         </div>
                         <span className="font-bold text-sm text-slate-800">Petunjuk Peta</span>
                     </div>
                     <ul className="space-y-3">
                         <li className="flex gap-3 text-[11px] text-slate-600">
-                            <div className="w-4 h-4 rounded-full bg-emerald-800 flex-shrink-0" />
+                            <div className="w-4 h-4 rounded-full bg-[var(--primary-color)] flex-shrink-0" />
                             <span>Klik ikon penanda untuk melihat detail singkat outlet.</span>
                         </li>
                         <li className="flex gap-3 text-[11px] text-slate-600">
-                            <div className="w-4 h-4 rounded-full border-2 border-emerald-800 flex-shrink-0" />
+                            <div className="w-4 h-4 rounded-full border-2 border-[var(--primary-color)] flex-shrink-0" />
                             <span>Gunakan tombol "Rute" di jendela info untuk navigasi GPS.</span>
                         </li>
                     </ul>

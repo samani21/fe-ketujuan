@@ -15,7 +15,7 @@ import { Router, useRouter } from 'next/router';
 const SidebarItem = ({ icon, label, active = false, url }: { icon: React.ReactNode, label: string, active?: boolean, url: string }) => {
     const router = useRouter();
     return (
-        <button className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${active ? 'bg-emerald-900 text-white shadow-lg shadow-emerald-900/20' : 'text-neutral-500 hover:bg-neutral-100'}`} onClick={() => router.push(url)}>
+        <button className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${active ? 'bg-blue-900 text-white shadow-lg shadow-[var(--secondary-color)]' : 'text-neutral-500 hover:bg-neutral-100'}`} onClick={() => router.push(url)}>
             {icon}
             <span className="font-semibold text-sm">{label}</span>
         </button>
@@ -61,11 +61,11 @@ const LayoutAdmin = ({ children, setSearchQuery, searchQuery }: { children: Reac
             {/* --- Sidebar --- */}
             <aside className={`fixed lg:sticky top-0 left-0 h-screen w-64 bg-white border-r border-neutral-100 p-6 flex flex-col z-50 transition-transform duration-300 lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex items-center space-x-2 mb-10 px-2">
-                    <div className="w-8 h-8 bg-emerald-900 rounded-lg flex items-center justify-center">
+                    <div className="w-8 h-8 bg-blue-900 rounded-lg flex items-center justify-center">
                         <TrendingUp size={18} className="text-white" />
                     </div>
-                    <h1 className="text-xl font-bold tracking-tight text-emerald-900">
-                        PURE<span className="font-light text-neutral-400">ADMIN</span>
+                    <h1 className="text-xl font-bold tracking-tight text-blue-900">
+                        BRAND<span className="font-light text-neutral-400">ADMIN</span>
                     </h1>
                 </div>
 

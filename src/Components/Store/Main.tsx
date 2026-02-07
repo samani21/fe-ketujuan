@@ -17,7 +17,7 @@ const MainStore = ({ categories, products, addToCart }: Props) => {
                 <section key={cat.id} id={cat.name} className="scroll-mt-32">
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-xl font-bold text-neutral-800">{cat.name}</h2>
-                        <span className="text-xs text-emerald-700 font-medium">Lihat Semua</span>
+                        <span className="text-xs text-[var(--primary-color)] font-medium">Lihat Semua</span>
                     </div>
 
                     {/* 2-Column Grid on Mobile */}
@@ -42,12 +42,12 @@ const MainStore = ({ categories, products, addToCart }: Props) => {
                                     <p className="text-[10px] text-neutral-400 line-clamp-2 mb-3 leading-tight">{product.desc}</p>
 
                                     <div className="mt-auto flex flex-col space-y-2">
-                                        <span className="font-extrabold text-sm text-emerald-900">
+                                        <span className="font-extrabold text-sm text-blue-900">
                                             Rp {product.price.toLocaleString('id-ID')}
                                         </span>
                                         <button
                                             onClick={() => addToCart(product)}
-                                            className="w-full py-2 bg-emerald-50 text-emerald-900 border border-emerald-100 rounded-xl flex items-center justify-center space-x-1 active:scale-95 transition-all text-xs font-bold"
+                                            className="w-full py-2 bg-blue-50 text-blue-900 border border-blue-100 rounded-xl flex items-center justify-center space-x-1 active:scale-95 transition-all text-xs font-bold"
                                         >
                                             <Plus size={14} />
                                             <span>Tambah</span>
