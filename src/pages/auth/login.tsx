@@ -39,19 +39,20 @@ const LoginPage = () => {
         <div className="min-h-screen bg-white flex font-sans text-slate-900">
             {/* Sisi Kiri: Visual & Testimonial (Hanya Desktop) */}
             <div className="hidden lg:flex lg:w-1/2 bg-slate-50 relative items-center justify-center p-12 overflow-hidden border-r border-slate-100">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-100/50 rounded-full blur-3xl -mr-32 -mt-32"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-100/50 rounded-full blur-3xl -ml-32 -mb-32"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100/50 rounded-full blur-3xl -mr-32 -mt-32"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-100/50 rounded-full blur-3xl -ml-32 -mb-32"></div>
 
                 <div className="relative z-10 max-w-md text-center">
                     <div className="flex justify-center mb-8">
-                        <div className="w-20 h-20 bg-emerald-600 rounded-[2.5rem] flex items-center justify-center shadow-2xl shadow-emerald-200 animate-pulse">
-                            <Zap className="text-white w-10 h-10" fill="white" />
+                        <div className="animate-pulse">
+                            {/* <Zap className="text-white w-10 h-10" fill="white" /> */}
+                            <img src={'/ketujuan.png'} className='w-52' />
                         </div>
                     </div>
 
                     <h2 className="text-3xl font-black text-slate-900 leading-tight mb-4">
                         Selamat Datang Kembali di <br />
-                        <span className="text-emerald-600">Katujuan.net</span>
+                        <span className="text-[var(--primary-color)]">Katujuan.net</span>
                     </h2>
                     <p className="text-slate-500 font-medium mb-12">
                         Kelola tokomu, pantau pesanan, dan tingkatkan penjualan UMKM-mu hari ini.
@@ -60,7 +61,7 @@ const LoginPage = () => {
                     <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 text-left">
                         <div className="flex gap-1 mb-4">
                             {[1, 2, 3, 4, 5].map((s) => (
-                                <span key={s} className="text-emerald-500">★</span>
+                                <span key={s} className="text-[var(--primary-color)]">★</span>
                             ))}
                         </div>
                         <p className="text-slate-600 font-medium italic text-sm leading-relaxed">
@@ -78,35 +79,26 @@ const LoginPage = () => {
             </div>
 
             {/* Sisi Kanan: Form Login */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 lg:p-20">
-                <div className="w-full">
-                    {/* Back to Home / Logo Mobile */}
-                    <div className="flex items-center justify-between mb-12">
-                        {/* <button className="flex items-center gap-2 text-slate-400 hover:text-emerald-600 transition-colors text-sm font-bold">
-                            <ChevronLeft size={18} /> Kembali
-                        </button> */}
-                        <div className="lg:hidden flex items-center gap-2">
-                            <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
-                                <Zap className="text-white w-5 h-5" fill="white" />
-                            </div>
-                            <span className="text-xl font-black text-emerald-950 tracking-tighter">Katujuan</span>
-                        </div>
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-6  md:p-12 lg:p-20">
+                <div className="w-full ">
+                    <div className="lg:hidden flex items-center gap-2 mt-[-60px]">
+                        <img src={'/ketujuan.png'} className='w-32' />
                     </div>
 
-                    <div className="mb-10">
+                    <div className="mb-10 px-1 sm:px-0">
                         <h1 className="text-4xl font-black text-slate-900 tracking-tight">Masuk</h1>
                         <p className="text-slate-500 mt-2 font-medium">Akses dashboard toko online Anda.</p>
                     </div>
 
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 px-1 sm:px-0">
                         {/* Input Email / Phone */}
                         <div className="space-y-1.5">
                             <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Email atau No. WhatsApp</label>
                             <div className="relative group">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors" size={18} />
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
                                 <input
                                     {...register("identifier", { required: "Email atau nomor WhatsApp wajib diisi" })}
-                                    className={`w-full bg-slate-50 border-2 ${errors.identifier ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-emerald-600'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
+                                    className={`w-full bg-slate-50 border-2 ${errors.identifier ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-[var(--primary-color)]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
                                     placeholder="email@toko.com atau 0812..."
                                 />
                             </div>
@@ -117,14 +109,14 @@ const LoginPage = () => {
                         <div className="space-y-1.5">
                             <div className="flex justify-between items-center ml-1">
                                 <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em]">Kata Sandi</label>
-                                <a href="#" className="text-[11px] font-bold text-emerald-700 hover:underline">Lupa Sandi?</a>
+                                <a href="#" className="text-[11px] font-bold text-[var(--primary-color)] hover:underline">Lupa Sandi?</a>
                             </div>
                             <div className="relative group">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors" size={18} />
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     {...register("password", { required: "Kata sandi wajib diisi" })}
-                                    className={`w-full bg-slate-50 border-2 ${errors.password ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-emerald-600'} rounded-2xl py-4 pl-12 pr-12 text-sm font-semibold outline-none focus:bg-white transition-all`}
+                                    className={`w-full bg-slate-50 border-2 ${errors.password ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-[var(--primary-color)]'} rounded-2xl py-4 pl-12 pr-12 text-sm font-semibold outline-none focus:bg-white transition-all`}
                                     placeholder="••••••••"
                                 />
                                 <button
@@ -140,14 +132,14 @@ const LoginPage = () => {
 
                         {/* Remember Me */}
                         <div className="flex items-center gap-2 ml-1">
-                            <input type="checkbox" id="remember" className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" />
+                            <input type="checkbox" id="remember" className="w-4 h-4 rounded border-slate-300 text-[var(--primary-color)] focus:ring-[var(--primary-colo)]" />
                             <label htmlFor="remember" className="text-xs font-bold text-slate-500 cursor-pointer">Ingat saya di perangkat ini</label>
                         </div>
 
                         <div className="pt-2">
                             <button
                                 disabled={isSubmitting}
-                                className="w-full bg-emerald-600 text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="w-full bg-[var(--primary-color)] text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-blue-100 hover:bg-[var(--secondary-color)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                             >
                                 {isSubmitting ? (
                                     <>
@@ -162,9 +154,9 @@ const LoginPage = () => {
                         </div>
                     </form>
 
-                    <div className="mt-10 pt-10 border-t border-slate-100 text-center">
+                    <div className="mt-10 pt-10 border-t border-slate-100 text-center px-1 sm:px-0">
                         <p className="text-sm font-semibold text-slate-500">
-                            Belum punya toko? <Link href={'register'} className="text-emerald-700 font-black hover:underline">Daftar gratis di sini</Link>
+                            Belum punya toko? <Link href={'register'} className="text-[var(--primary-color)] font-black hover:underline">Daftar gratis di sini</Link>
                         </p>
                     </div>
                 </div>

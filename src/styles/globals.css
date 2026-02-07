@@ -1,6 +1,15 @@
 @import "tailwindcss";
 
 :root {
+  --primary-color: #1A2D5E;
+  /* Biru Gelap - Dominan */
+  --secondary-color: #2C5294;
+  /* Biru Medium - Aksi */
+  --accent-color: #3D68A8;
+  /* Biru Terang - Grafik/Detail */
+  --bg-light: #F8FAFC;
+  /* Abu-abu sangat muda - Background */
+  --text-white: #FFFFFF;
   --background: #ffffff;
   --foreground: #171717;
 }
