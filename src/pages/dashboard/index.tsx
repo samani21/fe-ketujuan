@@ -4,7 +4,7 @@ import {
     MoreVertical,
     ArrowUpRight,
 } from 'lucide-react';
-import LayoutAdmin from '../Layout/LayoutAdmin';
+import LayoutAdmin from '../../Components/Layout/LayoutAdmin';
 import { RecentOrderType, StatType } from '@/types/Dashboard';
 import { RecentOrderDummy, StatsDummy } from '@/data/DashboardDummy';
 

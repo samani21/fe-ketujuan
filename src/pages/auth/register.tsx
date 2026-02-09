@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
     User,
@@ -12,6 +12,10 @@ import {
     Lock
 } from 'lucide-react';
 import Link from 'next/link';
+import { authService } from '@/services/authService';
+import { ApiResponse } from '@/types/api';
+import api from '@/utils/api';
+import { appConfig } from '@/config/appConfig';
 
 type RegisterForm = {
     fullName: string;
@@ -26,6 +30,31 @@ const RegisterPage = () => {
     const [subdomain, setSubdomain] = useState('');
     const [serverError, setServerError] = useState('');
 
+    const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
+    const [isChecking, setIsChecking] = useState(false);
+
+    // Gunakan useEffect untuk memantau perubahan subdomain
+    useEffect(() => {
+        if (subdomain.length < 3) {
+            setIsAvailable(null);
+            return;
+        }
+
+        const delayDebounceFn = setTimeout(async () => {
+            setIsChecking(true);
+            try {
+                const response = await api.get(`/check-subdomain?name=${subdomain}`);
+                setIsAvailable(response.data.available);
+            } catch (error) {
+                setIsAvailable(false);
+            } finally {
+                setIsChecking(false);
+            }
+        }, 500); // Tunggu 500ms setelah ketikan terakhir
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [subdomain]);
+
     const {
         register,
         handleSubmit,
@@ -36,32 +65,17 @@ const RegisterPage = () => {
         setIsSubmitting(true);
         setServerError('');
 
-        const payload = {
-            ...data,
-            subdomain: subdomain
-        };
-
         try {
-            const response = await fetch('https://api.katujuan.net/v1/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(payload),
-            });
-
-            const result = await response.json();
-
-            if (response.status === 200 || response.status === 201) {
-                // Berhasil! Redirect ke subdomain toko yang baru dibuat
-                window.location.href = `https://${subdomain}.katujuan.net/login?status=new_store`;
-            } else {
-                // Menampilkan error dari UtilityService
-                setServerError(result.message || "Pendaftaran gagal, silakan cek kembali data Anda.");
-            }
-        } catch (error) {
-            setServerError("Terjadi kesalahan koneksi ke server API.");
+            const response = await authService.register({ ...data, subdomain });
+            // Berhasil (status 200)
+            console.log('response', response)
+            // --- REDIRECT DINAMIS ---
+            const redirectUrl = appConfig.getTenantUrl(subdomain, '');
+            window.location.href = redirectUrl;
+        } catch (err: unknown) {
+            // Karena kita sudah melempar ApiResponse di catch authService:
+            const errorData = err as ApiResponse;
+            setServerError(errorData.message || "Pendaftaran gagal.");
         } finally {
             setIsSubmitting(false);
         }
@@ -84,12 +98,12 @@ const RegisterPage = () => {
 
                 <div className="relative z-10 max-w-md">
                     <div className="flex items-center gap-2 mb-12">
-                        <img src={'/ketujuan.png'} className='w-52' alt="Katujuan Logo" />
+                        <img src={'/katujuan.png'} className='w-52' alt="Katujuan Logo" />
                     </div>
 
                     <h2 className="text-4xl font-black text-black leading-tight mb-6">
-                        Langkah Terakhir Menuju <br />
-                        <span className="text-[var(--primary-color)] text-5xl">Bisnis Digital.</span>
+                        Kami Bantu Jualan<br />
+                        <span className="text-[var(--primary-color)] text-5xl">dengan Internet</span>
                     </h2>
 
                     <div className="space-y-6 mb-16">
@@ -97,7 +111,7 @@ const RegisterPage = () => {
                             "Gratis selamanya untuk fitur dasar",
                             "Tanpa perlu kartu kredit",
                             "Toko langsung aktif dalam 1 menit",
-                            "Dukungan WhatsApp 24/7"
+                            "Dukungan Tim 24/7"
                         ].map((text, idx) => (
                             <div key={idx} className="flex items-center gap-3 text-[var(--primary-color)] font-medium">
                                 <CheckCircle2 size={20} className="text-emerald-500" />
@@ -108,13 +122,13 @@ const RegisterPage = () => {
 
                     <div className="p-8 bg-blue-800/10 backdrop-blur-sm rounded-[2rem] border border-white/10">
                         <p className="text-[var(--primary-color)] italic text-sm leading-relaxed">
-                            {"Awalnya ragu buat jualan online karena gaptek, tapi pakai Katujuan ternyata gampang banget. Orderan masuk langsung ke Telegram!"}
+                            {"Awalnya antrian kedai saya membludak, setelah pakai Katujuan pelanggan saya bisa pesan duluan dan datang setelah pesanan hampir selesai."}
                         </p>
                         <div className="mt-4 flex items-center gap-3">
                             <div className="w-10 h-10 bg-blue-900 rounded-full"></div>
                             <div>
-                                <p className="text-black text-xs font-bold uppercase tracking-widest">Siti Khadijah</p>
-                                <p className="text-slate-500 text-[10px] font-medium">Owner Toko Berkah</p>
+                                <p className="text-black text-xs font-bold uppercase tracking-widest">Siti Yasmin</p>
+                                <p className="text-slate-500 text-[10px] font-medium">Owner Kedai Yasmin</p>
                             </div>
                         </div>
                     </div>
@@ -125,7 +139,7 @@ const RegisterPage = () => {
             <div className="w-full lg:w-1/2 flex items-center justify-center p-4 md:p-12 lg:p-20">
                 <div className="w-full max-w-md">
                     <div className="lg:hidden flex items-center gap-2 mb-8">
-                        <img src={'/ketujuan.png'} className='w-32' alt="Logo" />
+                        <img src={'/katujuan.png'} className='w-32' alt="Logo" />
                     </div>
 
                     <div className="mb-10">
@@ -215,26 +229,53 @@ const RegisterPage = () => {
 
                         {/* Subdomain URL */}
                         <div className="space-y-1.5">
-                            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">URL Toko (Subdomain)</label>
+                            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                                URL Toko (Subdomain)
+                            </label>
                             <div className="relative group">
                                 <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
                                 <input
                                     value={subdomain}
                                     onChange={handleSubdomainChange}
-                                    className="w-full bg-slate-50 border-2 border-slate-50 rounded-2xl py-4 pl-12 pr-28 text-sm font-bold text-[var(--primary-color)] outline-none focus:bg-white focus:border-[var(--primary-color)] transition-all"
+                                    className={`w-full bg-slate-50 border-2 rounded-2xl py-4 pl-12 pr-28 text-sm font-bold text-[var(--primary-color)] outline-none transition-all 
+                                        ${isAvailable === true ? 'border-emerald-100 focus:border-emerald-500' : ''} 
+                                        ${isAvailable === false ? 'border-rose-100 focus:border-rose-500' : ''} 
+                                        ${isAvailable === null ? 'border-slate-50 focus:border-[var(--primary-color)]' : ''}`}
                                     placeholder="nama-toko"
                                 />
-                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[11px] font-black text-slate-400 uppercase">.katujuan.net</span>
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                                    {isChecking && <Loader2 className="animate-spin text-slate-400" size={14} />}
+                                    <span className="text-[11px] font-black text-slate-400">.katujuan.net</span>
+                                </div>
+                            </div>
+
+                            {/* --- PESAN FEEDBACK (Real-time) --- */}
+                            <div className="min-h-[20px] ml-1">
+                                {subdomain.length > 0 && subdomain.length < 3 && (
+                                    <p className="text-[10px] text-slate-400 font-bold italic">Minimal 3 karakter...</p>
+                                )}
+                                {isAvailable === true && !isChecking && (
+                                    <p className="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
+                                        <CheckCircle2 size={12} /> Subdomain tersedia!
+                                    </p>
+                                )}
+                                {isAvailable === false && !isChecking && (
+                                    <p className="text-[10px] text-rose-500 font-bold flex items-center gap-1">
+                                        ⚠️ Subdomain ini sudah digunakan, coba nama lain.
+                                    </p>
+                                )}
                             </div>
 
                             {/* Preview Card */}
-                            <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100 flex items-center gap-3">
-                                <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm text-[var(--primary-color)]"><Globe size={14} /></div>
-                                <div className="overflow-hidden">
-                                    <p className="text-[10px] font-bold text-blue-900/40 uppercase tracking-tighter">Preview URL Toko Anda:</p>
-                                    <p className="text-xs font-black text-[var(--primary-color)] truncate">
-                                        https://<span className="text-blue-950 underline decoration-blue-300 decoration-2 underline-offset-2">{subdomain || 'toko-anda'}</span>.katujuan.net
-                                    </p>
+                            <div className={`p-4 rounded-2xl border transition-all ${isAvailable === false ? 'opacity-50 grayscale' : 'bg-blue-50 border-blue-100'}`}>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm text-[var(--primary-color)]"><Globe size={14} /></div>
+                                    <div className="overflow-hidden">
+                                        <p className="text-[10px] font-bold text-blue-900/40 uppercase tracking-tighter">Preview URL Toko Anda:</p>
+                                        <p className="text-xs font-black text-[var(--primary-color)] truncate">
+                                            https://<span className={`${isAvailable === false ? 'text-rose-500' : 'text-blue-950'} underline decoration-blue-300 decoration-2 underline-offset-2`}>{subdomain || 'toko-anda'}</span>.katujuan.net
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

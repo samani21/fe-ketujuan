@@ -17,7 +17,7 @@ import {
     Save,
     Upload
 } from 'lucide-react';
-import LayoutAdmin from '../Layout/LayoutAdmin';
+import LayoutAdmin from '../../Components/Layout/LayoutAdmin';
 import { ProductType } from '@/types/Product';
 import { ProductDummy } from '@/data/ProductsDummy';
 

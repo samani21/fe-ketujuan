@@ -25,7 +25,7 @@ import {
     TrendingUp,
     Filter
 } from 'lucide-react';
-import LayoutAdmin from '../Layout/LayoutAdmin';
+import LayoutAdmin from '../../Components/Layout/LayoutAdmin';
 import { SalesDataType, TransactionDetailType } from '@/types/Report';
 import { SalesDataDummy, TransactionDetailsDummy } from '@/data/ReportDummy';
 

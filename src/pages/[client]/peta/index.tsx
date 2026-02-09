@@ -4,9 +4,10 @@ import {
     Navigation,
     Info,
 } from 'lucide-react';
-import LayoutStore from '../Layout/LayoutStore';
+
 import { OutletType } from '@/types/Outlet';
 import { outletDummey } from '@/data/OutletDummy';
+import LayoutStore from '@/Components/Layout/LayoutStore';
 
 // MASUKKAN API KEY ANDA DI SINI
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
