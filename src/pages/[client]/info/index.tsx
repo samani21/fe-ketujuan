@@ -1,6 +1,7 @@
+import LayoutStore from '@/Components/Layout/LayoutStore'
 import { Award, ChevronRight, Clock, Facebook, Globe, Instagram, Phone, Store, Users } from 'lucide-react'
 import React from 'react'
-import LayoutStore from '../Layout/LayoutStore'
+
 
 const InfoPage = () => {
     return (
