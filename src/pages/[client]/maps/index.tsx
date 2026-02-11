@@ -12,7 +12,7 @@ import LayoutStore from '@/Components/Layout/LayoutStore';
 // MASUKKAN API KEY ANDA DI SINI
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
-const PetaPage = () => {
+const MapsPage = () => {
     const [outlets, setOutlets] = useState<OutletType[]>([]);
     useEffect(() => {
         setOutlets(outletDummey);
@@ -153,4 +153,4 @@ const PetaPage = () => {
     );
 };
 
-export default PetaPage;
+export default MapsPage;
