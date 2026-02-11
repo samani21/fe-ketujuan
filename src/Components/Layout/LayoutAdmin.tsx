@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     LayoutDashboard,
@@ -7,10 +7,13 @@ import {
     Menu,
     Bell,
     Search,
-    TrendingUp
+    TrendingUp,
+    LogOutIcon
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { Router, useRouter } from 'next/router';
+import { authService } from '@/services/authService';
+import { appConfig } from '@/config/appConfig';
 
 const SidebarItem = ({ icon, label, active = false, url }: { icon: React.ReactNode, label: string, active?: boolean, url: string }) => {
     const router = useRouter();
@@ -43,6 +46,37 @@ const MenuSidebar = [
 const LayoutAdmin = ({ children, setSearchQuery, searchQuery }: { children: React.ReactNode, setSearchQuery?: (v: string) => void; searchQuery?: string }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const pathname = usePathname();
+    const router = useRouter();
+
+    useEffect(() => {
+        checkLogin()
+    }, [])
+    const handleLogout = async () => {
+        try {
+            const response: any = await authService.logout();
+            if (response) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                localStorage.removeItem("client");
+
+                router.replace('/')
+            }
+
+        } catch (err: any) {
+            console.log(err.message || "Gagal diproses");
+        }
+    }
+    const checkLogin = () => {
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+        const client = JSON.parse(localStorage.getItem('client') || 'null');
+
+        if (client && user?.role === 'customer') {
+            handleLogout()
+        } else if (!token && !client) {
+            window.location.href = '/';
+        }
+    }
     return (
         <div className="min-h-screen bg-slate-100 flex">
 
@@ -78,13 +112,17 @@ const LayoutAdmin = ({ children, setSearchQuery, searchQuery }: { children: Reac
                 </nav>
 
                 <div className="mt-auto pt-6 border-t border-neutral-100">
-                    <div className="flex items-center space-x-3 px-2">
+                    {/* <div className="flex items-center space-x-3 px-2">
                         <div className="w-10 h-10 rounded-full bg-neutral-200" />
                         <div className="min-w-0 flex-1">
                             <p className="text-sm font-bold truncate">Manager Toko</p>
                             <p className="text-xs text-neutral-400 truncate">admin@pureeats.com</p>
                         </div>
-                    </div>
+                    </div> */}
+                    <button className='text-red-500 px-4 flex items-center gap-2 cursor-pointer' onClick={handleLogout}>
+                        <LogOutIcon />
+                        <span>Keluar</span>
+                    </button>
                 </div>
             </aside>
 

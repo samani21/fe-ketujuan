@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
     Mail,
@@ -10,9 +10,10 @@ import {
     EyeOff,
 } from 'lucide-react';
 import Link from 'next/link';
+import { authService } from '@/services/authService';
 type RegisterForm = {
     password: string;
-    identifier: string;
+    email: string;
 };
 
 const LoginPage = () => {
@@ -25,16 +26,54 @@ const LoginPage = () => {
         formState: { errors },
     } = useForm<RegisterForm>();
 
-    const onSubmit = (data: RegisterForm) => {
-        setIsSubmitting(true);
-        // Simulasi proses login
-        setTimeout(() => {
-            setIsSubmitting(false);
-            console.log("Login data:", data);
-            alert("Login Berhasil! Mengalihkan ke Dashboard...");
-        }, 1500);
-    };
+    useEffect(() => {
+        checkLogin()
+    })
 
+    const onSubmit = async (data: RegisterForm) => {
+
+
+        setIsSubmitting(true);
+        try {
+            const response: any = await authService.login({ ...data });
+            console.log('response', response)
+            localStorage.setItem("token", response?.token);
+            localStorage.setItem("user", JSON.stringify(response?.user));
+            localStorage.setItem("client", JSON.stringify(response?.client));
+            if (response?.user?.role === 'customer') {
+                const redirectUrl =
+                    `http://${response?.client?.subdomain}.app.katujuan.net` +
+                    `?token=${response?.token}` +
+                    `&user=${encodeURIComponent(JSON.stringify(response?.user))}` +
+                    `&client=${encodeURIComponent(JSON.stringify(response?.client))}`;
+
+                window.location.href = redirectUrl;
+            } else {
+                checkLogin();
+            }
+            setTimeout(() => {
+                setIsSubmitting(false);
+            }, 1500);
+        } catch (err: unknown) {
+            setIsSubmitting(false);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+    const checkLogin = () => {
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+        const client = JSON.parse(localStorage.getItem('client') || 'null');
+        if (user?.role === 'customer') {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            localStorage.removeItem("client");
+        } else {
+            if (token && client) {
+                window.location.href = '/dashboard';
+            }
+        }
+    }
     return (
         <div className="min-h-screen bg-white flex font-sans text-slate-900">
             {/* Sisi Kiri: Visual & Testimonial (Hanya Desktop) */}
@@ -97,12 +136,12 @@ const LoginPage = () => {
                             <div className="relative group">
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
                                 <input
-                                    {...register("identifier", { required: "Email atau nomor WhatsApp wajib diisi" })}
-                                    className={`w-full bg-slate-50 border-2 ${errors.identifier ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-[var(--primary-color)]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
+                                    {...register("email", { required: "Email atau nomor WhatsApp wajib diisi" })}
+                                    className={`w-full bg-slate-50 border-2 ${errors.email ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-[var(--primary-color)]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
                                     placeholder="email@toko.com atau 0812..."
                                 />
                             </div>
-                            {errors.identifier && <p className="text-[10px] text-rose-500 font-bold ml-1">{errors.identifier.message}</p>}
+                            {errors.email && <p className="text-[10px] text-rose-500 font-bold ml-1">{errors.email.message}</p>}
                         </div>
 
                         {/* Input Password */}
