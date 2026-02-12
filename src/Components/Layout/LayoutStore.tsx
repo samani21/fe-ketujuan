@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { StoreData } from '@/services/storeService';
 import { appConfig } from '@/config/appConfig';
 import { authService } from '@/services/authService';
+import { Get, getToken } from '@/utils/apiWithToken';
 
 const listMenu = [
     { icon: <Store size={22} strokeWidth={2.5} />, name: "Outlet", url: '/' },
@@ -25,20 +26,20 @@ const LayoutStore = ({ children, setSearchQuery, searchQuery, storeData, userLoc
     const route = useRouter();
     const pathname = usePathname();
     const params = useSearchParams();
-
+    const token = getToken();
     useEffect(() => {
         checkLogin()
     }, [params, route, pathname])
 
     const handleLogout = async () => {
         try {
-            const response: any = await authService.logout();
-            if (response) {
+            const res = await Get<{ message: string }>('v1/auth/logout')
+            if (res?.message === 'Successfully logged out') {
                 localStorage.removeItem("token");
                 localStorage.removeItem("user");
                 localStorage.removeItem("client");
 
-                window.location.href = 'https://app.katujuan.net/';
+                window.location.href = 'http://app.katujuan.net/';
             }
 
         } catch (err: any) {
@@ -104,9 +105,11 @@ const LayoutStore = ({ children, setSearchQuery, searchQuery, storeData, userLoc
                             <button onClick={() => route.push('/products')} className="p-2.5 bg-slate-50 rounded-xl text-slate-400 hover:text-blue-900 transition-colors shadow-sm border border-slate-100">
                                 <ShoppingBag size={20} />
                             </button>
-                            <button onClick={handleLogout} className="p-2.5 bg-slate-50 rounded-xl text-red-400 cursor-pointer hover:text-blue-900 transition-colors shadow-sm border border-slate-100">
-                                <LogOutIcon size={20} />
-                            </button>
+                            {token &&
+                                <button onClick={handleLogout} className="p-2.5 bg-slate-50 rounded-xl text-red-400 cursor-pointer hover:text-blue-900 transition-colors shadow-sm border border-slate-100">
+                                    <LogOutIcon size={20} />
+                                </button>
+                            }
                         </div>
                     </div>
 

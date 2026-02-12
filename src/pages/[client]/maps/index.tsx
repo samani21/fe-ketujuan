@@ -6,8 +6,8 @@ import {
 } from 'lucide-react';
 
 import { OutletType } from '@/types/Outlet';
-import { outletDummey } from '@/data/OutletDummy';
 import LayoutStore from '@/Components/Layout/LayoutStore';
+import { storeService } from '@/services/storeService';
 
 // MASUKKAN API KEY ANDA DI SINI
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -15,7 +15,7 @@ const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const MapsPage = () => {
     const [outlets, setOutlets] = useState<OutletType[]>([]);
     useEffect(() => {
-        setOutlets(outletDummey);
+        getClient()
     }, [])
 
     // Komponen Peta menggunakan Google Maps
@@ -105,6 +105,34 @@ const MapsPage = () => {
             </div>
         );
     };
+
+    const getClient = async () => {
+        try {
+            const result = await storeService.getStoreInfo();
+            if (result.status === 'success') {
+                console.log('result', result?.data?.outlets)
+                const outlets: OutletType[] = result?.data?.outlets?.map((item: any) => ({
+                    id: item.id,
+                    name: item.name,
+                    address: item.address,
+                    distance: item.distance ?? null, // default dulu kalau tidak ada
+                    status: item.is_open ? 'Buka' : 'Tutup',
+                    closeTime: item.open_until,
+                    phone: item.telp,
+                    coords: {
+                        lat: Number(item.latitude),
+                        lng: Number(item.longitude),
+                    }
+                })) ?? [];
+
+                setOutlets(outlets);
+            }
+        } catch (error) {
+            console.error("Gagal memuat:", error);
+        } finally {
+        }
+    };
+
 
     return (
         <LayoutStore>
