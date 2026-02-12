@@ -42,4 +42,28 @@ export const authService = {
       throw { message: 'Terjadi kesalahan sistem yang tidak diketahui' };
     }
   },
+  resetPassowrd: async (payload: Record<string, unknown>): Promise<ApiResponse> => {
+    try {
+      const response = await api.post<ApiResponse>('v1/auth/request-reset', payload);
+      return response.data;
+    } catch (error: unknown) {
+      // Menangani error Axios tanpa 'any'
+      if (axios.isAxiosError(error)) {
+        throw (error.response?.data as ApiResponse) || { message: 'Gagal menghubungi server' };
+      }
+      throw { message: 'Terjadi kesalahan sistem yang tidak diketahui' };
+    }
+  },
+  changePassword: async (payload: Record<string, unknown>, token: string): Promise<ApiResponse> => {
+    try {
+      const response = await api.post<ApiResponse>(`v1/auth/reset-password?token=${token}`, payload);
+      return response.data;
+    } catch (error: unknown) {
+      // Menangani error Axios tanpa 'any'
+      if (axios.isAxiosError(error)) {
+        throw (error.response?.data as ApiResponse) || { message: 'Gagal menghubungi server' };
+      }
+      throw { message: 'Terjadi kesalahan sistem yang tidak diketahui' };
+    }
+  },
 };

@@ -8,9 +8,11 @@ import {
     Loader2,
     Eye,
     EyeOff,
+    AlertTriangle,
 } from 'lucide-react';
 import Link from 'next/link';
 import { authService } from '@/services/authService';
+import { Console } from 'console';
 type RegisterForm = {
     password: string;
     email: string;
@@ -19,7 +21,7 @@ type RegisterForm = {
 const LoginPage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-
+    const [errorLogin, setErrorLogin] = useState<string | null>(null)
     const {
         register,
         handleSubmit,
@@ -54,7 +56,8 @@ const LoginPage = () => {
             setTimeout(() => {
                 setIsSubmitting(false);
             }, 1500);
-        } catch (err: unknown) {
+        } catch (err: any) {
+            setErrorLogin(err?.message)
             setIsSubmitting(false);
         } finally {
             setIsSubmitting(false);
@@ -128,17 +131,23 @@ const LoginPage = () => {
                         <h1 className="text-4xl font-black text-slate-900 tracking-tight">Masuk</h1>
                         <p className="text-slate-500 mt-2 font-medium">Akses dashboard toko online Anda.</p>
                     </div>
-
+                    {
+                        errorLogin &&
+                        <div className='bg-red-100 text-red-600 px-4 py-2 rounded-lg flex items-center gap-2'>
+                            <AlertTriangle size={16}/>
+                            <span className='text-[12px]'>{errorLogin}</span>
+                        </div>
+                    }
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 px-1 sm:px-0">
                         {/* Input Email / Phone */}
                         <div className="space-y-1.5">
-                            <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Email atau No. WhatsApp</label>
+                            <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Email</label>
                             <div className="relative group">
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
                                 <input
-                                    {...register("email", { required: "Email atau nomor WhatsApp wajib diisi" })}
+                                    {...register("email", { required: "Email" })}
                                     className={`w-full bg-slate-50 border-2 ${errors.email ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-[var(--primary-color)]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
-                                    placeholder="email@toko.com atau 0812..."
+                                    placeholder="email@toko.com"
                                 />
                             </div>
                             {errors.email && <p className="text-[10px] text-rose-500 font-bold ml-1">{errors.email.message}</p>}
@@ -148,7 +157,7 @@ const LoginPage = () => {
                         <div className="space-y-1.5">
                             <div className="flex justify-between items-center ml-1">
                                 <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em]">Kata Sandi</label>
-                                <a href="#" className="text-[11px] font-bold text-[var(--primary-color)] hover:underline">Lupa Sandi?</a>
+                                <a href="reset-password" className="text-[11px] font-bold text-[var(--primary-color)] hover:underline">Lupa Sandi?</a>
                             </div>
                             <div className="relative group">
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
