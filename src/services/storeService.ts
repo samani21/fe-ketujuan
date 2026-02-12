@@ -8,8 +8,15 @@ export interface Outlet {
   telp: string;
   is_open: boolean;
   open_until: string;
-  latitude: number | null;  
-  longitude: number | null; 
+  latitude: number | null;
+  longitude: number | null;
+}
+
+export interface BusinessHour {
+  day_start: string;
+  day_end: string;
+  open_time: string;
+  close_time: string;
 }
 export interface StoreData {
   id: number;
@@ -19,6 +26,10 @@ export interface StoreData {
   address: string | null;
   telp: string;
   outlets: Outlet[];
+  description?: string;
+  subdomain?: string;
+  email?: string;
+  business_hour?: BusinessHour[];
 }
 
 export const storeService = {
