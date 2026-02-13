@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --primary-color: #1A2D5E;
+  /* --primary-color: #1A2D5E; */
   /* Biru Gelap - Dominan */
   --secondary-color: #2C5294;
   /* Biru Medium - Aksi */
@@ -32,4 +32,21 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* sembunyikan scrollbar tapi tetap bisa scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Edge */
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE & Edge lama */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+button {
+  cursor: pointer;
 }

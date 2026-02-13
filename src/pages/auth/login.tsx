@@ -94,7 +94,7 @@ const LoginPage = () => {
 
                     <h2 className="text-3xl font-black text-slate-900 leading-tight mb-4">
                         Selamat Datang Kembali di <br />
-                        <span className="text-[var(--primary-color)]">Katujuan.net</span>
+                        <span className="text-[#1A2D5E]">Katujuan.net</span>
                     </h2>
                     <p className="text-slate-500 font-medium mb-12">
                         Kelola tokomu, pantau pesanan, dan tingkatkan penjualan UMKM-mu hari ini.
@@ -103,7 +103,7 @@ const LoginPage = () => {
                     <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 text-left">
                         <div className="flex gap-1 mb-4">
                             {[1, 2, 3, 4, 5].map((s) => (
-                                <span key={s} className="text-[var(--primary-color)]">★</span>
+                                <span key={s} className="text-[#1A2D5E]">★</span>
                             ))}
                         </div>
                         <p className="text-slate-600 font-medium italic text-sm leading-relaxed">
@@ -134,7 +134,7 @@ const LoginPage = () => {
                     {
                         errorLogin &&
                         <div className='bg-red-100 text-red-600 px-4 py-2 rounded-lg flex items-center gap-2'>
-                            <AlertTriangle size={16}/>
+                            <AlertTriangle size={16} />
                             <span className='text-[12px]'>{errorLogin}</span>
                         </div>
                     }
@@ -143,10 +143,10 @@ const LoginPage = () => {
                         <div className="space-y-1.5">
                             <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Email</label>
                             <div className="relative group">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1A2D5E] transition-colors" size={18} />
                                 <input
                                     {...register("email", { required: "Email" })}
-                                    className={`w-full bg-slate-50 border-2 ${errors.email ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-[var(--primary-color)]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
+                                    className={`w-full bg-slate-50 border-2 ${errors.email ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-[#1A2D5E]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
                                     placeholder="email@toko.com"
                                 />
                             </div>
@@ -157,14 +157,14 @@ const LoginPage = () => {
                         <div className="space-y-1.5">
                             <div className="flex justify-between items-center ml-1">
                                 <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em]">Kata Sandi</label>
-                                <a href="reset-password" className="text-[11px] font-bold text-[var(--primary-color)] hover:underline">Lupa Sandi?</a>
+                                <a href="reset-password" className="text-[11px] font-bold text-[#1A2D5E] hover:underline">Lupa Sandi?</a>
                             </div>
                             <div className="relative group">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1A2D5E] transition-colors" size={18} />
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     {...register("password", { required: "Kata sandi wajib diisi" })}
-                                    className={`w-full bg-slate-50 border-2 ${errors.password ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-[var(--primary-color)]'} rounded-2xl py-4 pl-12 pr-12 text-sm font-semibold outline-none focus:bg-white transition-all`}
+                                    className={`w-full bg-slate-50 border-2 ${errors.password ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-[#1A2D5E]'} rounded-2xl py-4 pl-12 pr-12 text-sm font-semibold outline-none focus:bg-white transition-all`}
                                     placeholder="••••••••"
                                 />
                                 <button
@@ -180,14 +180,14 @@ const LoginPage = () => {
 
                         {/* Remember Me */}
                         <div className="flex items-center gap-2 ml-1">
-                            <input type="checkbox" id="remember" className="w-4 h-4 rounded border-slate-300 text-[var(--primary-color)] focus:ring-[var(--primary-colo)]" />
+                            <input type="checkbox" id="remember" className="w-4 h-4 rounded border-slate-300 text-[#1A2D5E] focus:ring-[var(--primary-colo)]" />
                             <label htmlFor="remember" className="text-xs font-bold text-slate-500 cursor-pointer">Ingat saya di perangkat ini</label>
                         </div>
 
                         <div className="pt-2">
                             <button
                                 disabled={isSubmitting}
-                                className="w-full bg-[var(--primary-color)] text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-blue-100 hover:bg-[var(--secondary-color)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="w-full bg-[#1A2D5E] text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-blue-100 hover:bg-[var(--secondary-color)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                             >
                                 {isSubmitting ? (
                                     <>
@@ -204,7 +204,7 @@ const LoginPage = () => {
 
                     <div className="mt-10 pt-10 border-t border-slate-100 text-center px-1 sm:px-0">
                         <p className="text-sm font-semibold text-slate-500">
-                            Belum punya toko? <Link href={'register'} className="text-[var(--primary-color)] font-black hover:underline">Daftar gratis di sini</Link>
+                            Belum punya toko? <Link href={'register'} className="text-[#1A2D5E] font-black hover:underline">Daftar gratis di sini</Link>
                         </p>
                     </div>
                 </div>

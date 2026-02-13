@@ -7,7 +7,7 @@ import React from 'react'
 type Props = {
     categories: CategorieType[];
     products: ProductType[];
-    addToCart: (P: ProductType) => void;
+    addToCart?: (P: ProductType) => void;
 }
 
 const MainStore = ({ categories, products, addToCart }: Props) => {
@@ -42,12 +42,12 @@ const MainStore = ({ categories, products, addToCart }: Props) => {
                                     <p className="text-[10px] text-neutral-400 line-clamp-2 mb-3 leading-tight">{product.desc}</p>
 
                                     <div className="mt-auto flex flex-col space-y-2">
-                                        <span className="font-extrabold text-sm text-blue-900">
+                                        <span className="font-extrabold text-sm text-[var(--primary-color)]">
                                             Rp {product.price.toLocaleString('id-ID')}
                                         </span>
                                         <button
-                                            onClick={() => addToCart(product)}
-                                            className="w-full py-2 bg-blue-50 text-blue-900 border border-blue-100 rounded-xl flex items-center justify-center space-x-1 active:scale-95 transition-all text-xs font-bold"
+                                            onClick={() => addToCart && addToCart(product)}
+                                            className="w-full py-2 bg-[var(--primary-color)]/5 text-[var(--primary-color)] border border-[var(--primary-color)]/10 rounded-xl flex items-center justify-center space-x-1 active:scale-95 transition-all text-xs font-bold"
                                         >
                                             <Plus size={14} />
                                             <span>Tambah</span>

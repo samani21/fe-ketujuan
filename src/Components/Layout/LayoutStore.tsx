@@ -5,7 +5,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { StoreData } from '@/services/storeService';
 import { appConfig } from '@/config/appConfig';
 import { authService } from '@/services/authService';
-import { Get, getToken } from '@/utils/apiWithToken';
+import { Get, getClient, getToken } from '@/utils/apiWithToken';
 
 const listMenu = [
     { icon: <Store size={22} strokeWidth={2.5} />, name: "Outlet", url: '/' },
@@ -20,13 +20,15 @@ interface LayoutStoreProps {
     searchQuery?: string;
     storeData?: StoreData | null; // Dinamis dari API
     userLocationName?: string;   // Dinamis dari Geolocation
+    isPreview?: boolean;
 }
 
-const LayoutStore = ({ children, setSearchQuery, searchQuery, storeData, userLocationName }: LayoutStoreProps) => {
+const LayoutStore = ({ children, setSearchQuery, searchQuery, storeData, userLocationName, isPreview }: LayoutStoreProps) => {
     const route = useRouter();
     const pathname = usePathname();
     const params = useSearchParams();
     const token = getToken();
+    const client = getClient();
     useEffect(() => {
         checkLogin()
     }, [params, route, pathname])
@@ -102,11 +104,11 @@ const LayoutStore = ({ children, setSearchQuery, searchQuery, storeData, userLoc
                             </div>
                         </div>
                         <div className="flex gap-2">
-                            <button onClick={() => route.push('/products')} className="p-2.5 bg-slate-50 rounded-xl text-slate-400 hover:text-blue-900 transition-colors shadow-sm border border-slate-100">
+                            <button onClick={() => !isPreview && route.push('/products')} className="p-2.5 bg-slate-50 rounded-xl text-slate-400 hover:text-[var(--primary-color)] transition-colors shadow-sm border border-slate-100">
                                 <ShoppingBag size={20} />
                             </button>
-                            {token &&
-                                <button onClick={handleLogout} className="p-2.5 bg-slate-50 rounded-xl text-red-400 cursor-pointer hover:text-blue-900 transition-colors shadow-sm border border-slate-100">
+                            {token && !isPreview &&
+                                <button onClick={handleLogout} className="p-2.5 bg-slate-50 rounded-xl text-red-400 cursor-pointer hover:text-[var(--primary-color)] transition-colors shadow-sm border border-slate-100">
                                     <LogOutIcon size={20} />
                                 </button>
                             }
@@ -115,11 +117,11 @@ const LayoutStore = ({ children, setSearchQuery, searchQuery, storeData, userLoc
 
                     {setSearchQuery && (
                         <div className="relative group">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-900 transition-colors" size={18} />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
                             <input
                                 type="text"
                                 placeholder="Cari outlet..."
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3.5 pl-10 pr-4 text-sm font-medium focus:ring-2 focus:ring-blue-900/10 focus:bg-white focus:border-blue-900 transition-all outline-none"
+                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3.5 pl-10 pr-4 text-sm font-medium focus:ring-2 focus:ring-[var(--primary-color)]/10 focus:bg-white focus:border-[var(--primary-color)] transition-all outline-none"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -133,27 +135,26 @@ const LayoutStore = ({ children, setSearchQuery, searchQuery, storeData, userLoc
             </main>
 
             {/* Bottom Navigation */}
-            <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-slate-100 px-8 py-4 max-w-screen-md mx-auto flex justify-between items-center shadow-[0_-8px_30px_rgb(0,0,0,0.04)] z-30 rounded-t-[2.5rem]">
+            <nav className={`${isPreview ? "sticky" : "fixed"} bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-slate-100 px-8 py-4 max-w-screen-md mx-auto flex justify-between items-center shadow-[0_-8px_30px_rgb(0,0,0,0.04)] z-30 rounded-t-[2.5rem]`}>
                 {listMenu?.map((ls, i) => {
                     // Logika Active: Memastikan '/' cocok dengan Home
                     const isActive = ls.url === pathname || (ls.url === '/' && pathname === null);
 
                     return (
-                        <div
+                        isPreview ? <div
                             key={i}
-                            onClick={() => route.push(ls.url)}
-                            className={`flex flex-col items-center gap-1 transition-all duration-300 cursor-pointer ${isActive
-                                ? 'text-blue-900 scale-110'
+                            className={`flex flex-col items-center gap-1 transition-all duration-300 cursor-pointer ${ls?.name === 'Outlet'
+                                ? 'text-[var(--primary-color)] scale-110'
                                 : 'text-slate-400 hover:text-slate-600'
                                 }`}
                         >
                             {/* Icon Section */}
-                            <div className={`transition-transform ${isActive ? '-translate-y-1' : ''}`}>
+                            <div className={`transition-transform ${ls?.name === 'Outlet' ? '-translate-y-1' : ''}`}>
                                 {ls.icon}
                             </div>
 
                             {/* Text Section: Sekarang selalu terlihat tapi beda ketebalan/warna */}
-                            <span className={`text-[9px] uppercase tracking-[0.15em] transition-all ${isActive
+                            <span className={`text-[9px] uppercase tracking-[0.15em] transition-all ${ls?.name === 'Outlet'
                                 ? 'font-black opacity-100'
                                 : 'font-bold opacity-60'
                                 }`}>
@@ -161,14 +162,43 @@ const LayoutStore = ({ children, setSearchQuery, searchQuery, storeData, userLoc
                             </span>
 
                             {/* Active Indicator Dot */}
-                            {isActive && (
-                                <div className="w-1 h-1 bg-blue-900 rounded-full mt-0.5 animate-pulse"></div>
+                            {ls?.name === 'Outlet' && (
+                                <div className="w-1 h-1 bg-[var(--primary-color)] rounded-full mt-0.5 animate-pulse"></div>
                             )}
-                        </div>
+                        </div> :
+                            <div
+                                key={i}
+                                onClick={() => route.push(ls.url)}
+                                className={`flex flex-col items-center gap-1 transition-all duration-300 cursor-pointer ${isActive
+                                    ? 'text-[var(--primary-color)] scale-110'
+                                    : 'text-slate-400 hover:text-slate-600'
+                                    }`}
+                            >
+                                {/* Icon Section */}
+                                <div className={`transition-transform ${isActive ? '-translate-y-1' : ''}`}>
+                                    {ls.icon}
+                                </div>
+
+                                {/* Text Section: Sekarang selalu terlihat tapi beda ketebalan/warna */}
+                                <span className={`text-[9px] uppercase tracking-[0.15em] transition-all ${isActive
+                                    ? 'font-black opacity-100'
+                                    : 'font-bold opacity-60'
+                                    }`}>
+                                    {ls.name}
+                                </span>
+
+                                {/* Active Indicator Dot */}
+                                {isActive && (
+                                    <div className="w-1 h-1 bg-[var(--primary-color)] rounded-full mt-0.5 animate-pulse"></div>
+                                )}
+                            </div>
                     );
                 })}
             </nav>
-            <div className="h-28"></div>
+            {
+                !isPreview &&
+                <div className="h-28"></div>
+            }
         </div>
     );
 };

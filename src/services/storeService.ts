@@ -18,6 +18,12 @@ export interface BusinessHour {
   open_time: string;
   close_time: string;
 }
+
+export interface Branding {
+  client_id: number;
+  id: number;
+  primary_color: string;
+}
 export interface StoreData {
   id: number;
   name: string;
@@ -30,6 +36,7 @@ export interface StoreData {
   subdomain?: string;
   email?: string;
   business_hour?: BusinessHour[];
+  branding: Branding;
 }
 
 export const storeService = {

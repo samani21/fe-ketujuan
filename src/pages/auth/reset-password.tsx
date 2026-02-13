@@ -41,14 +41,14 @@ const ResetPassword = () => {
 
                 <div className="relative z-10 max-w-md text-center">
                     <div className="flex justify-center mb-8">
-                        <div className="w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center text-[var(--primary-color)]">
+                        <div className="w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center text-[#1A2D5E]">
                             <ShieldCheck size={40} />
                         </div>
                     </div>
 
                     <h2 className="text-3xl font-black text-slate-900 leading-tight mb-4">
                         Keamanan Akun <br />
-                        <span className="text-[var(--primary-color)]">Prioritas Kami</span>
+                        <span className="text-[#1A2D5E]">Prioritas Kami</span>
                     </h2>
                     <p className="text-slate-500 font-medium mb-12">
                         Jangan khawatir, kami akan membantu Anda memulihkan akses ke dashboard Katujuan.net dengan aman.
@@ -56,7 +56,7 @@ const ResetPassword = () => {
 
                     <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 text-left">
                         <div className="flex items-start gap-4">
-                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[var(--primary-color)] shrink-0">
+                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#1A2D5E] shrink-0">
                                 <KeyRound size={20} />
                             </div>
                             <div>
@@ -75,11 +75,11 @@ const ResetPassword = () => {
                 <div className="w-full max-w-md lg:max-w-none">
                     {/* Logo Mobile */}
                     <div className="lg:hidden flex items-center gap-2 mt-[-60px] mb-12">
-                        <div className="w-10 h-10 bg-[var(--primary-color)] rounded-xl flex items-center justify-center text-white font-bold">K</div>
+                        <div className="w-10 h-10 bg-[#1A2D5E] rounded-xl flex items-center justify-center text-white font-bold">K</div>
                         <span className="font-black text-xl tracking-tight">Katujuan.net</span>
                     </div>
 
-                    <Link href="login" className="inline-flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-[var(--primary-color)] transition-colors mb-8 group">
+                    <Link href="login" className="inline-flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-[#1A2D5E] transition-colors mb-8 group">
                         <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Kembali ke Login
                     </Link>
 
@@ -94,11 +94,11 @@ const ResetPassword = () => {
                                 <div className="space-y-1.5">
                                     <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Email</label>
                                     <div className="relative group">
-                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1A2D5E] transition-colors" size={18} />
                                         <input
                                             value={inputValue}
                                             onChange={(e) => setInputValue(e.target.value)}
-                                            className={`w-full bg-slate-50 border-2 ${error ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-[var(--primary-color)]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
+                                            className={`w-full bg-slate-50 border-2 ${error ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-[#1A2D5E]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
                                             placeholder="email@toko.com"
                                         />
                                     </div>
@@ -108,7 +108,7 @@ const ResetPassword = () => {
                                 <div className="pt-2">
                                     <button
                                         disabled={isSubmitting}
-                                        className="w-full bg-[var(--primary-color)] text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-blue-100 hover:bg-[var(--secondary-color)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                        className="w-full bg-[#1A2D5E] text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-blue-100 hover:bg-[var(--secondary-color)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
                                         {isSubmitting ? (
                                             <>
@@ -143,7 +143,7 @@ const ResetPassword = () => {
                                     Kembali
                                 </button>
                                 <p className="text-sm font-semibold text-slate-400">
-                                    Tidak menerima pesan? <button className="text-[var(--primary-color)] font-black hover:underline">Kirim ulang</button>
+                                    Tidak menerima pesan? <button className="text-[#1A2D5E] font-black hover:underline">Kirim ulang</button>
                                 </p>
                             </div>
                         </div>
@@ -151,7 +151,7 @@ const ResetPassword = () => {
 
                     <div className="mt-10 pt-10 border-t border-slate-100 text-center px-1 sm:px-0">
                         <p className="text-sm font-semibold text-slate-500">
-                            Butuh bantuan lebih lanjut? <Link href="#" className="text-[var(--primary-color)] font-black hover:underline">Hubungi Support</Link>
+                            Butuh bantuan lebih lanjut? <Link href="#" className="text-[#1A2D5E] font-black hover:underline">Hubungi Support</Link>
                         </p>
                     </div>
                 </div>

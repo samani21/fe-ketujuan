@@ -8,21 +8,73 @@ import {
     Bell,
     Search,
     TrendingUp,
-    LogOutIcon
+    LogOutIcon,
+    ChevronUp,
+    ChevronDown
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { authService } from '@/services/authService';
-import { appConfig } from '@/config/appConfig';
+import { StoreData } from '@/services/storeService';
+import { Get } from '@/utils/apiWithToken';
+import PageLoader from '../AdminPanel/PageLoader';
 
-const SidebarItem = ({ icon, label, active = false, url }: { icon: React.ReactNode, label: string, active?: boolean, url: string }) => {
+const SidebarItem = ({
+    icon,
+    label,
+    url,
+    active,
+    child
+}: {
+    icon: React.ReactNode,
+    label: string,
+    url: string,
+    active: boolean,
+    child?: { label: string, url: string }[]
+}) => {
     const router = useRouter();
+    const [isOpen, setIsOpen] = useState(active); // Otomatis buka jika child aktif
+
+    const hasChild = child && child.length > 0;
+
+    const handleClick = () => {
+        if (hasChild) {
+            setIsOpen(!isOpen);
+        } else {
+            router.push(url);
+        }
+    };
+
     return (
-        <button className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${active ? 'bg-blue-900 text-white shadow-lg shadow-[var(--secondary-color)]' : 'text-neutral-500 hover:bg-neutral-100'}`} onClick={() => router.push(url)}>
-            {icon}
-            <span className="font-semibold text-sm">{label}</span>
-        </button>
-    )
+        <div className="w-full">
+            {/* Main Menu Item */}
+            <button
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${active && !hasChild ? 'bg-[var(--primary-color)]/90 text-white shadow-lg' : 'text-neutral-500 hover:bg-neutral-100'}`}
+                onClick={handleClick}
+            >
+                <div className="flex items-center space-x-3">
+                    {icon}
+                    <span className="font-semibold text-sm">{label}</span>
+                </div>
+                {hasChild && (isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+            </button>
+
+            {/* Child Menu Items */}
+            {hasChild && isOpen && (
+                <div className="mt-2 ml-9 space-y-1">
+                    {child.map((item, idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => router.push(item.url)}
+                            className={`w-full text-left px-4 py-2 text-sm rounded-lg transition-colors ${router.pathname === item.url ? 'text-[var(--primary-color)] font-bold' : 'text-neutral-500 hover:bg-neutral-50'}`}
+                        >
+                            {item.label}
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
 };
 
 const MenuSidebar = [
@@ -35,6 +87,12 @@ const MenuSidebar = [
         label: "Manage",
         icon: <ShoppingBag size={20} />,
         url: '/manage',
+        child: [
+            {
+                label: "Color",
+                url: '/manage/color'
+            }
+        ]
     },
     {
         label: "Report",
@@ -43,13 +101,24 @@ const MenuSidebar = [
     },
 ]
 
-const LayoutAdmin = ({ children, setSearchQuery, searchQuery }: { children: React.ReactNode, setSearchQuery?: (v: string) => void; searchQuery?: string }) => {
+type Props = {
+    children: React.ReactNode;
+    setSearchQuery?: (v: string) => void;
+    searchQuery?: string;
+    setInfoStore?: (val: StoreData) => void;
+}
+
+const LayoutAdmin = ({ children, setSearchQuery, searchQuery, setInfoStore }: Props) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const pathname = usePathname();
     const router = useRouter();
+    const [dataStore, setDataStore] = useState<StoreData | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         checkLogin()
+        getInfoStore()
+
     }, [])
     const handleLogout = async () => {
         try {
@@ -77,10 +146,47 @@ const LayoutAdmin = ({ children, setSearchQuery, searchQuery }: { children: Reac
             window.location.href = '/';
         }
     }
+
+    const currentMenu = MenuSidebar?.reduce((acc, ms) => {
+        // 1. Cek jika cocok dengan menu utama
+        if (ms.url === pathname) return ms;
+
+        // 2. Cek jika cocok dengan salah satu child
+        const activeChild = ms.child?.find(c => c.url === pathname);
+        if (activeChild) return activeChild;
+
+        return acc;
+    }, null as any);
+
+    const getInfoStore = async () => {
+        setLoading(true)
+        try {
+            const res = await Get<{ status: string, data: StoreData }>('/v1/front/store-info')
+            if (res?.status == "success") {
+                if (setInfoStore) {
+                    setInfoStore(res?.data);
+                }
+                setDataStore(res?.data);
+                document.documentElement.style.setProperty('--primary-color', res?.data?.branding?.primary_color);
+                // Mengonversi hex ke RGB sederhana untuk transparansi (biasanya pakai library, di sini manual sederhana)
+                const r = parseInt(res?.data?.branding?.primary_color?.slice(1, 3), 16);
+                const g = parseInt(res?.data?.branding?.primary_color?.slice(3, 5), 16);
+                const b = parseInt(res?.data?.branding?.primary_color?.slice(5, 7), 16);
+                document.documentElement.style.setProperty('--primary-rgb', `${r}, ${g}, ${b}`);
+                setLoading(false)
+            }
+        } catch (e: any) {
+            setLoading(false)
+
+        }
+    }
+    if (loading) {
+        return <div>
+            <PageLoader />
+        </div>
+    }
     return (
         <div className="min-h-screen bg-slate-100 flex">
-
-            {/* --- Sidebar Overlay (Mobile) --- */}
             <AnimatePresence>
                 {isSidebarOpen && (
                     <motion.div
@@ -95,20 +201,33 @@ const LayoutAdmin = ({ children, setSearchQuery, searchQuery }: { children: Reac
             {/* --- Sidebar --- */}
             <aside className={`fixed lg:sticky top-0 left-0 h-screen w-64 bg-white border-r border-neutral-100 p-6 flex flex-col z-50 transition-transform duration-300 lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex items-center space-x-2 mb-10 px-2">
-                    <div className="w-8 h-8 bg-blue-900 rounded-lg flex items-center justify-center">
+                    <div className="w-8 h-8 bg-[var(--primary-color)] rounded-lg flex items-center justify-center">
                         <TrendingUp size={18} className="text-white" />
                     </div>
-                    <h1 className="text-xl font-bold tracking-tight text-blue-900">
+                    <h1 className="text-xl font-bold tracking-tight text-[var(--primary-color)]">
                         BRAND<span className="font-light text-neutral-400">ADMIN</span>
                     </h1>
                 </div>
 
                 <nav className="flex-1 space-y-2">
-                    {
-                        MenuSidebar?.map((ms, i) => (
-                            <SidebarItem icon={ms?.icon} label={ms?.label} key={i} active={pathname == ms?.url} url={ms?.url} />
-                        ))
-                    }
+                    {MenuSidebar?.map((ms, i) => {
+                        // Cek apakah URL utama aktif
+                        const isMainActive = pathname === ms.url;
+
+                        // Cek apakah ada anak yang aktif
+                        const isChildActive = ms.child?.some(c => pathname === c.url);
+
+                        return (
+                            <SidebarItem
+                                key={i}
+                                icon={ms.icon}
+                                label={ms.label}
+                                url={ms.url}
+                                active={isMainActive || !!isChildActive}
+                                child={ms.child} // Kirim data child ke komponen
+                            />
+                        )
+                    })}
                 </nav>
 
                 <div className="mt-auto pt-6 border-t border-neutral-100">
@@ -138,7 +257,9 @@ const LayoutAdmin = ({ children, setSearchQuery, searchQuery }: { children: Reac
                             >
                                 <Menu size={24} />
                             </button>
-                            <h2 className="text-lg font-bold hidden text-gray-700 sm:block">{MenuSidebar?.find((ms) => pathname == ms?.url)?.label}</h2>
+                            <h2 className="text-lg font-bold hidden text-gray-700 sm:block">
+                                {currentMenu?.label || "Dashboard"}
+                            </h2>
                         </div>
 
                         <div className="flex items-center space-x-2 sm:space-x-4">
@@ -164,8 +285,7 @@ const LayoutAdmin = ({ children, setSearchQuery, searchQuery }: { children: Reac
                     </div>
                 </header>
 
-                <div className="max-w-screen-2xl mx-auto px-4 sm:px-8 py-8 space-y-8">
-
+                <div className="max-w-screen-2xl mx-auto px-4 sm:px-8 py-8 space-y-8 text-gray-400">
                     {children}
                 </div>
             </main>
