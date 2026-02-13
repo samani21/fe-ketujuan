@@ -64,7 +64,7 @@ const ModalChckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal,
                                 <motion.div
                                     initial={{ scale: 0 }}
                                     animate={{ scale: 1 }}
-                                    className="w-16 h-16 bg-blue-100 text-[var(--primary-color)] rounded-full flex items-center justify-center mb-4"
+                                    className="w-16 h-16 bg-[var(--primary-color)] text-[var(--primary-color)] rounded-full flex items-center justify-center mb-4"
                                 >
                                     <CheckCircle2 size={36} />
                                 </motion.div>
@@ -106,7 +106,7 @@ const ModalChckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal,
                                     </div>
                                     <div className="flex justify-between font-bold text-base pt-2">
                                         <span>Total Bayar</span>
-                                        <span className="text-blue-900">Rp {(cartTotal + 10000).toLocaleString('id-ID')}</span>
+                                        <span className="text-[var(--primary-color)]">Rp {(cartTotal + 10000).toLocaleString('id-ID')}</span>
                                     </div>
                                 </div>
 
@@ -114,7 +114,7 @@ const ModalChckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal,
                                     <p className="text-xs font-bold text-neutral-800 uppercase tracking-wider">Metode Transfer Bank</p>
                                     <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100">
                                         <p className="text-xs text-neutral-500 mb-1">BCA - PureEats Jakarta</p>
-                                        <p className="font-black text-blue-900 text-sm tracking-widest">8830 1234 5678</p>
+                                        <p className="font-black text-[var(--primary-color)] text-sm tracking-widest">8830 1234 5678</p>
                                     </div>
 
                                     <div
@@ -145,7 +145,7 @@ const ModalChckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal,
                                     disabled={uploadProgress < 100}
                                     onClick={handleCheckout}
                                     className={`w-full mt-6 py-4 rounded-xl font-black text-sm transition-all ${uploadProgress === 100
-                                        ? 'bg-blue-900 text-white shadow-lg'
+                                        ? 'bg-[var(--primary-color)] text-white shadow-lg'
                                         : 'bg-neutral-100 text-neutral-300 cursor-not-allowed'
                                         }`}
                                 >

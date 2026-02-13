@@ -32,11 +32,11 @@ const ColorPage = () => {
         }
     }, [infoStore])
     useEffect(() => {
-        document.documentElement.style.setProperty('--primary-color', primaryColor);
+        document.documentElement.style.setProperty('--primary-color', primaryColor || "#1A2D5E");
         // Mengonversi hex ke RGB sederhana untuk transparansi (biasanya pakai library, di sini manual sederhana)
-        const r = parseInt(primaryColor.slice(1, 3), 16);
-        const g = parseInt(primaryColor.slice(3, 5), 16);
-        const b = parseInt(primaryColor.slice(5, 7), 16);
+        const r = parseInt(primaryColor?.slice(1, 3), 16);
+        const g = parseInt(primaryColor?.slice(3, 5), 16);
+        const b = parseInt(primaryColor?.slice(5, 7), 16);
         document.documentElement.style.setProperty('--primary-rgb', `${r}, ${g}, ${b}`);
     }, [infoStore, primaryColor]);
 
@@ -118,7 +118,7 @@ const ColorPage = () => {
                                         <span className="text-gray-400 font-mono">HEX:</span>
                                         <input
                                             type="text"
-                                            value={primaryColor.toUpperCase()}
+                                            value={primaryColor?.toUpperCase()}
                                             onChange={(e) => setPrimaryColor(e.target.value)}
                                             className="font-mono font-bold text-gray-800 focus:outline-none w-full"
                                         />
