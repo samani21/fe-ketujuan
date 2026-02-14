@@ -1,6 +1,6 @@
 import FronStoreColor from '@/Components/AdminPanel/Color/FronStoreColor';
 import ProductColor from '@/Components/AdminPanel/Color/ProductColor';
-import Notification from '@/Components/AdminPanel/Notification';
+import Notification from '@/Components/Component/Notification';
 import LayoutAdmin from '@/Components/Layout/LayoutAdmin'
 import { StoreData } from '@/services/storeService';
 import { Post } from '@/utils/apiWithToken';

@@ -10,14 +10,16 @@ import {
     TrendingUp,
     LogOutIcon,
     ChevronUp,
-    ChevronDown
+    ChevronDown,
+    Settings,
+    Layers2
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { authService } from '@/services/authService';
 import { StoreData } from '@/services/storeService';
 import { Get } from '@/utils/apiWithToken';
-import PageLoader from '../AdminPanel/PageLoader';
+import PageLoader from '../Component/PageLoader';
 
 const SidebarItem = ({
     icon,
@@ -84,8 +86,13 @@ const MenuSidebar = [
         url: '/dashboard',
     },
     {
+        label: "Categorie",
+        icon: <Layers2 size={20} />,
+        url: '/categories',
+    },
+    {
         label: "Manage",
-        icon: <ShoppingBag size={20} />,
+        icon: <Settings size={20} />,
         url: '/manage',
         child: [
             {
