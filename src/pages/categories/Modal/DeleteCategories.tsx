@@ -9,7 +9,7 @@ type Props = {
     data?: any;
 }
 
-const ExampleDelete = ({ modalType, closeModal, handleDelete, data }: Props) => {
+const DeleteCategories = ({ modalType, closeModal, handleDelete, data }: Props) => {
     return (
         <Modal isOpen={modalType === 'delete'} onClose={closeModal} title="Konfirmasi">
             <div className="text-center py-4">
@@ -30,4 +30,4 @@ const ExampleDelete = ({ modalType, closeModal, handleDelete, data }: Props) => 
     )
 }
 
-export default ExampleDelete
+export default DeleteCategories

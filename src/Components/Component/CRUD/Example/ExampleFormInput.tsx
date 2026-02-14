@@ -4,10 +4,13 @@ import React, { useState } from "react";
 import FormField from "@/Components/Component/CRUD/FormField";
 import Modal from "@/Components/Component/Modal";
 import { Save } from "lucide-react";
+import IconSelectAutocomplete from "../IconSelectAutocomplete";
 
 type Props = {
     modalType: string | null;
     closeModal: () => void;
+    handleSubmit: (e: any) => void;
+    data: any;
 };
 
 const ExampleFormInput = ({ modalType, closeModal }: Props) => {
@@ -107,23 +110,31 @@ const ExampleFormInput = ({ modalType, closeModal }: Props) => {
                         onChange={update}
                         disabled={isLoading} />
 
+                    <IconSelectAutocomplete
+                        value={''}
+                        onChange={update}
+                        disabled={isLoading}
+                        data={null}
+                    />
                     <div className="flex justify-end pt-4">
                         <button
+                            type="button"
                             onClick={closeModal}
                             disabled={isLoading}
                             className="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors disabled:opacity-50"
                         >
-                            Batal
+                            Cancel
                         </button>
+
                         <button
                             type="submit"
-                            className="flex items-center gap-2 px-6 py-2 bg-[#2D336B] text-white rounded-xl"
+                            disabled={isLoading}
+                            className={isLoading ? "rounded-xl flex items-center gap-2 px-6 py-2 bg-slate-100 cursor-not-allowed text-slate-400" : "flex items-center gap-2 px-6 py-2 bg-[var(--primary-color)] text-white rounded-xl"}
                         >
                             <Save size={16} />
-                            Submit Demo
+                            Save
                         </button>
                     </div>
-
                 </form>
             </div>
         </Modal>

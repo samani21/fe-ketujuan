@@ -1,97 +1,65 @@
 import DynamicTable from '@/Components/Component/CRUD/DynamicTable'
 import HeaderCrud from '@/Components/Component/CRUD/HeaderCrud';
 import LayoutAdmin from '@/Components/Layout/LayoutAdmin';
-import { Edit2, Filter, Plus, Search, Trash2 } from 'lucide-react';
+import { Edit2, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 import { Column } from '@/Components/Component/CRUD/Type';
+import { Delete, Get, Post } from '@/utils/apiWithToken';
+import { ProductCategorieType } from '@/types/Client/ProductCategories';
+import * as Icons from 'lucide-react';
+import Notification from '@/Components/Component/Notification';
 import ExampleFormInput from './ExampleFormInput';
 import ExampleDelete from './ExampleDelete';
 
-type Transaction = {
-    id: number
-    tanggal: string
-    nama: string
-    produk: string
-    qty: number
-    total: number
-    metode: string
-}
 
-
-type Props = {}
-
-const ExampleCRUD = (props: Props) => {
+const ExampleCRUD = () => {
     const [modalType, setModalType] = useState<string | null>(null);
+    const [dataCategories, setDataCategories] = useState<ProductCategorieType[]>([])
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState<number>(1)
-    let lastPage = 12
-    const [transactions] = useState([
-        ...Array.from({ length: 10 }, (_, i) => ({
-            id: i + 1,
-            tanggal: `2024-02-${String((i % 28) + 1).padStart(2, "0")}`,
-            nama: `User ${i + 1}`,
-            produk: ["Aren Latte", "Matcha", "Americano", "Croissant", "Cappuccino"][i % 5],
-            qty: (i % 5) + 1,
-            total: ((i % 5) + 1) * 20000 + 16000,
-            metode: ["BCA Transfer", "QRIS", "E-Wallet", "Tunai"][i % 4],
-            status: ["Sukses", "Pending", "Batal"][i % 3],
-            aktif: i % 2 === 0,
-            foto: `https://picsum.photos/40?random=${i + 1}`,
-            rating: (i % 5) + 1,
-            created_at: `2024-02-${String((i % 28) + 1).padStart(2, "0")}T${String((i % 12) + 1).padStart(2, "0")}:${String((i % 60) + 1).padStart(2, "0")}:${String((i % 60) + 1).padStart(2, "0")}`,
-        }))
-    ]);
-
-    const [data, setData] = useState<any>();
     const [debouncedSearch, setDebouncedSearch] = useState<string>('');
+    const [data, setData] = useState<ProductCategorieType | null>(null);
+    const [lastPage, setLastPage] = useState<number>(1);
+    const [countData, setCountData] = useState<number>(1);
+    const [showNotif, setShowNotif] = useState<any>({
+        message: '',
+        type: '',
+        isOpen: false,
+    });
 
     useEffect(() => {
-        if (!debouncedSearch) return;
 
-        console.log("Search jalan:", debouncedSearch);
+        getCategories()
         setLoading(false);
-        // panggil API disini
-        // getProducts(debouncedSearch)
-
-    }, [debouncedSearch]);
+    }, [debouncedSearch, currentPage]);
 
 
-    const columnTable: Column<Transaction>[] = [
+    const columnTable: Column<ProductCategorieType>[] = [
         {
-            header: "Tanggal",
-            key: "tanggal",
-            type: "date"
+            header: "Name Category",
+            key: "name",
         },
         {
-            header: "Nama Pelanggan",
-            key: "nama",
+            header: "Icon",
+            key: "icon",
+            render: (row) => {
+                const LucideIcon = row.icon && (Icons as any)[row.icon];
+                return LucideIcon ? (
+                    <LucideIcon className="w-6 h-6" />
+                ) : (
+                    "-"
+                )
+            }
         },
         {
-            header: "Produk",
-            type: "custom",
-            render: (row) => `${row.produk} (${row.qty})`
-        },
-        {
-            header: "Total",
-            key: "total",
-            type: "rupiah"
-        },
-        {
-            header: "Metode",
-            key: "metode",
-            type: "badge"
-        },
-        {
-            header: "Cretad At",
-            key: "created_at",
-            type: "datetime"
-        },
-        {
-            header: "Aksi",
+            header: "Action",
             type: "custom",
             render: (row) => (
-                <div className="flex justify-center gap-2 opacity-0 group-hover:opacity-100">
-                    <button onClick={() => setModalType('edit')}><Edit2 size={16} /></button>
+                <div className="flex justify-center gap-2 opacity-90 group-hover:opacity-100">
+                    <button onClick={() => {
+                        setModalType('edit')
+                        setData(row)
+                    }}><Edit2 size={16} /></button>
                     <button onClick={() => {
                         setModalType('delete')
                         setData(row)
@@ -101,109 +69,117 @@ const ExampleCRUD = (props: Props) => {
         }
     ]
 
+    const getCategories = async () => {
+        try {
+            const res = await Get<{ status: string, data: any }>(`/v1/product-categorie?page=${currentPage}&per_page=10&search=${debouncedSearch}`);
+            if (res?.status === 'success') {
+                setDataCategories(res?.data?.data)
+                setLastPage(res?.data?.last_page)
+                setCountData(res?.data?.total)
+            }
+        } catch (e) {
 
-    const generatePagination = (current: number, last: number) => {
-        const delta = 2;
-        const range = [];
-        const pages: (number | string)[] = [];
-
-        for (let i = Math.max(2, current - delta); i <= Math.min(last - 1, current + delta); i++) {
-            range.push(i);
         }
+    }
 
-        if (current - delta > 2) {
-            pages.push(1, "...");
-        } else {
-            pages.push(1);
+    const handleSubmit = async (form: any) => {
+        try {
+            if (data) {
+                const res = await Post<any, FormData>(`/v1/product-categorie/${data?.id}`, form);
+                if (res?.status == "success") {
+                    {
+                        setModalType(null)
+                        setData(null)
+                    };
+                    getCategories();
+                    setShowNotif({
+                        message: res?.message,
+                        type: res?.status,
+                        isOpen: true
+                    })
+                }
+            } else {
+                const res = await Post<any, FormData>('/v1/product-categorie', form);
+                if (res?.status == "success") {
+                    {
+                        setModalType(null)
+                        setData(null)
+                    };
+                    getCategories();
+                    setShowNotif({
+                        message: res?.message,
+                        type: res?.status,
+                        isOpen: true
+                    })
+                }
+            }
+        } catch (e) {
+            setShowNotif({
+                message: "Gagal proses",
+                type: "error",
+                isOpen: true
+
+            })
         }
+    }
+    const handleDelete = async () => {
+        try {
+            const res = await Delete<any>(`/v1/product-categorie/${data?.id}`);
+            if (res?.status == "success") {
+                {
+                    setModalType(null)
+                    setData(null)
+                };
+                getCategories();
+                setShowNotif({
+                    message: res?.message,
+                    type: res?.status,
+                    isOpen: true
+                })
+            }
+        } catch (e) {
+            setShowNotif({
+                message: "Gagal proses",
+                type: "error",
+                isOpen: true
 
-        pages.push(...range);
-
-        if (current + delta < last - 1) {
-            pages.push("...", last);
-        } else if (last > 1) {
-            pages.push(last);
+            })
         }
-
-        return [...new Set(pages)];
-    };
-
-
-    const footerTable = () => {
-        return (
-            <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
-                <p className="text-xs text-slate-500">
-                    Menampilkan {transactions.length} transaksi terbaru
-                </p>
-
-                <div className="flex gap-2 items-center">
-                    {/* Prev */}
-                    <button
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                        className={`px-3 py-1 text-xs font-semibold border rounded-lg 
-            ${currentPage === 1
-                                ? "bg-white border-slate-200 text-slate-400 cursor-not-allowed"
-                                : "bg-white border-slate-200 text-[#2D336B] hover:border-[#2D336B]"
-                            }`}
-                    >
-                        Prev
-                    </button>
-
-                    {/* Number Pages */}
-                    {generatePagination(currentPage, lastPage).map((page, i) =>
-                        page === "..." ? (
-                            <span key={i} className="px-2 text-xs text-slate-400">...</span>
-                        ) : (
-                            <button
-                                key={i}
-                                onClick={() => setCurrentPage(page as number)}
-                                className={`px-3 py-1 text-xs font-semibold border rounded-lg
-            ${currentPage === page
-                                        ? "bg-[#2D336B] text-white border-[#2D336B]"
-                                        : "bg-white border-slate-200 text-[#2D336B]"
-                                    }`}
-                            >
-                                {page}
-                            </button>
-                        )
-                    )}
-
-                    {/* Next */}
-                    <button
-                        disabled={currentPage === lastPage}
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                        className={`px-3 py-1 text-xs font-semibold border rounded-lg
-            ${currentPage === lastPage
-                                ? "bg-white border-slate-200 text-slate-400 cursor-not-allowed"
-                                : "bg-white border-slate-200 text-[#2D336B] hover:border-[#2D336B]"
-                            }`}
-                    >
-                        Next
-                    </button>
-                </div>
-            </div>
-
-        )
     }
     return (
         <LayoutAdmin>
-            <HeaderCrud title={"List Category"}
-                subtitle={"Kelola list kategori"}
-                setModalType={setModalType}
-                debouncedSearch={debouncedSearch}
-                setDebouncedSearch={setDebouncedSearch}
-                loading={loading}
-                setLoading={setLoading} />
-            <DynamicTable
-                columns={columnTable}
-                data={transactions}
-                Footer={footerTable}
-            />
+            <div className='space-y-4'>
+                <HeaderCrud title={"List Category"}
+                    subtitle={"Kelola list kategori"}
+                    setModalType={setModalType}
+                    debouncedSearch={debouncedSearch}
+                    setDebouncedSearch={setDebouncedSearch}
+                    loading={loading}
+                    setLoading={setLoading} />
+                <DynamicTable
+                    columns={columnTable}
+                    data={dataCategories}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    lastPage={lastPage}
+                    countData={countData}
+                />
+
+                {
+                    modalType === 'add' || modalType === 'edit' ?
+                        <ExampleFormInput modalType={modalType} closeModal={() => {
+                            setModalType(null)
+                            setData(null)
+                        }} handleSubmit={handleSubmit} data={null} /> :
+                        <ExampleDelete modalType={modalType} closeModal={() => {
+                            setModalType(null)
+                            setData(null)
+                        }} data={data} handleDelete={(v) => handleDelete()} />
+                }
+            </div>
             {
-                modalType === 'add' || modalType === 'edit' ?
-                    <ExampleFormInput modalType={modalType} closeModal={() => setModalType(null)} /> :
-                    <ExampleDelete modalType={modalType} closeModal={() => setModalType(null)} data={data} handleDelete={(v) => console.log(v)} />
+                showNotif?.isOpen &&
+                <Notification onClose={() => setShowNotif(false)} message={showNotif?.message} type={showNotif?.type} />
             }
         </LayoutAdmin>
     )

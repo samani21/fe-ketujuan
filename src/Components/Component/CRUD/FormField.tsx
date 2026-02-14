@@ -54,7 +54,7 @@ const FormField = ({
         }
         ${error
             ? 'border-red-500 focus:border-red-500'
-            : 'border-slate-200 focus:border-[#2D336B]'
+            : 'border-slate-200 focus:border-[var(--primary-color)]'
         }
     `
 
@@ -136,7 +136,7 @@ const FormField = ({
                             disabled={disabled}
                             onChange={handleCheckbox}
                         />
-                        <div className="w-10 h-5 bg-slate-300 rounded-full peer-checked:bg-[#2D336B]"></div>
+                        <div className="w-10 h-5 bg-slate-300 rounded-full peer-checked:bg-[var(--primary-color)]"></div>
                         <div className="absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition peer-checked:translate-x-5"></div>
                     </div>
                     <span>{label}</span>
