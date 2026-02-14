@@ -1,3 +1,4 @@
+import { StoreData } from '@/services/storeService';
 import { CategorieType } from '@/types/CategorieProduct'
 import { Search, ShoppingBag } from 'lucide-react'
 import { useRouter } from 'next/router';
@@ -6,9 +7,10 @@ import React, { useState } from 'react'
 type Props = {
     categories: CategorieType[];
     isPreview?: boolean;
+    infoStore: StoreData | null;
 }
 
-const HeaderStore = ({ categories, isPreview }: Props) => {
+const HeaderStore = ({ categories, isPreview, infoStore }: Props) => {
     const route = useRouter();
     const [activeTab, setActiveTab] = useState<string>('Coffee');
     const scrollToCategory = (name: string) => {
@@ -32,9 +34,9 @@ const HeaderStore = ({ categories, isPreview }: Props) => {
             <div className="max-w-screen-md mx-auto px-4 py-3 flex justify-between items-center">
                 <div className="flex flex-col cursor-pointer" onClick={() => !isPreview && route.push('/')}>
                     <h1 className="text-lg font-extrabold tracking-tight text-[var(--primary-color)] leading-none">
-                        PURE<span className="font-light text-neutral-400">EATS</span>
+                        {infoStore?.name}
                     </h1>
-                    <span className="text-[10px] text-neutral-400 uppercase tracking-widest font-medium">Coffee & Eatery</span>
+                    {/* <span className="text-[10px] text-neutral-400 uppercase tracking-widest font-medium">{infoStore?.name}</span> */}
                 </div>
                 <div className="flex items-center space-x-3">
                     <button className="p-2 text-neutral-400"><Search size={20} /></button>

@@ -1,4 +1,3 @@
-import LayoutStore from '@/Components/Layout/LayoutStore'
 import FloatingCartStore from '@/Components/Store/FloatingCart'
 import HeaderStore from '@/Components/Store/Header'
 import MainStore from '@/Components/Store/Main'
@@ -7,16 +6,16 @@ import { ProductDummy } from '@/data/ProductsDummy'
 import { StoreData } from '@/services/storeService'
 import { CategorieType } from '@/types/CategorieProduct'
 import { ProductType } from '@/types/Product'
-import { Get } from '@/utils/apiWithToken'
 import React, { useEffect, useState } from 'react'
 
-type Props = {}
+type Props = {
+    infoStore: StoreData | null;
+}
 
-const ProductColor = (props: Props) => {
+const ProductColor = ({ infoStore }: Props) => {
     const [categories, setCategories] = useState<CategorieType[]>();
     const [products, setProducts] = useState<ProductType[]>();
     const [cart, setCart] = useState<ProductType[]>([]);
-    const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
 
     useEffect(() => {
@@ -40,14 +39,14 @@ const ProductColor = (props: Props) => {
         <div className="relative min-h-screen bg-slate-100 font-sans text-neutral-900 [transform:translateZ(0)]">
 
 
-            <HeaderStore categories={categories ?? []} isPreview={true} />
+            <HeaderStore categories={categories ?? []} isPreview={true} infoStore={infoStore} />
 
             {/* --- Main Content --- */}
 
             <MainStore categories={categories ?? []} products={products ?? []} addToCart={addToCart} />
 
             {/* --- Floating Mobile Cart --- */}
-            <FloatingCartStore cartCount={cartCount} cartTotal={cartTotal} setIsCheckoutOpen={setIsCheckoutOpen} />
+            <FloatingCartStore cartCount={cartCount} cartTotal={cartTotal} setIsCheckoutOpen={() => { }} />
 
 
             <style>{`

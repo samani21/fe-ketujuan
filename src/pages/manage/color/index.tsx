@@ -2,10 +2,9 @@ import FronStoreColor from '@/Components/AdminPanel/Color/FronStoreColor';
 import ProductColor from '@/Components/AdminPanel/Color/ProductColor';
 import Notification from '@/Components/AdminPanel/Notification';
 import LayoutAdmin from '@/Components/Layout/LayoutAdmin'
-import LayoutStore from '@/Components/Layout/LayoutStore';
 import { StoreData } from '@/services/storeService';
-import { Get, Post } from '@/utils/apiWithToken';
-import { Check, Palette, RefreshCcw } from 'lucide-react'
+import { Post } from '@/utils/apiWithToken';
+import { Check, RefreshCcw } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 
 const presets = [
@@ -148,7 +147,7 @@ const ColorPage = () => {
                         </div>
                         <div className='h-[73vh] overflow-auto no-scrollbar'>
                             {
-                                isFrontStore ? <FronStoreColor infoStore={infoStore} /> : <ProductColor />
+                                isFrontStore ? <FronStoreColor infoStore={infoStore} /> : <ProductColor infoStore={infoStore} />
                             }
                         </div>
                     </div>
