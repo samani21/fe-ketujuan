@@ -12,6 +12,7 @@ type Props = {
     | 'text'
     | 'number'
     | 'date'
+    | 'time'
     | 'email'
     | 'password'
     | 'autocomplete'

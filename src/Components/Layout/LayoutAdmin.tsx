@@ -95,11 +95,11 @@ const MenuSidebar = [
                 url: '/manage/outlets'
             },
             {
-                label: "Categorie",
+                label: "Categories",
                 url: '/manage/categories'
             },
             {
-                label: "Product List",
+                label: "Products",
                 url: '/manage/products'
             },
             {

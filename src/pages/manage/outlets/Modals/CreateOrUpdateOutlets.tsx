@@ -5,12 +5,12 @@ import FormField from "@/Components/Component/CRUD/FormField";
 import Modal from "@/Components/Component/Modal";
 import { Save } from "lucide-react";
 import { Get } from "@/utils/apiWithToken";
-import { ProductCategorieType } from "@/types/Client/ProductCategories";
+import GoogleMapPicker from "@/Components/Component/CRUD/GoogleMapPicker";
 
 type Props = {
     modalType: string | null;
     closeModal: () => void;
-    handleSubmit: (e: any) => void;
+    handleSubmit: (e: any, lat: number, lng: number) => void;
     data: any;
 };
 
@@ -19,26 +19,35 @@ type Option = {
     value: string;
 }
 
-const CreateOrUpdateProducts = ({ modalType, closeModal, handleSubmit, data }: Props) => {
-    const [errors, setErrors] = useState<any>({});
+
+const CreateOrUpdateOutlets = ({ modalType, closeModal, handleSubmit, data }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [dataCategories, setDataCategories] = useState<Option[]>([])
+    const [dataCategories, setDataCategories] = useState<Option[]>([]);
+    const [location, setLocation] = useState({
+        lat: 0,
+        lng: 0,
+    })
+
     const [form, setForm] = useState<any>({
-        category_id: "",
         name: "",
-        description: "",
-        price: "",
-        image: null,
+        telp: "",
+        open_until: "",
+        address: "",
+        is_open: 1,
     });
 
     useEffect(() => {
         if (data) {
             setForm({
                 name: data?.name,
-                image: data?.image,
-                description: data?.description,
-                price: data?.price,
-                category_id: data?.category_id,
+                telp: data?.telp,
+                open_until: data?.open_until,
+                address: data?.address,
+                is_open: data?.is_open,
+            });
+            setLocation({
+                lat: data?.latitude,
+                lng: data?.longitude,
             })
         }
     }, [data])
@@ -53,7 +62,7 @@ const CreateOrUpdateProducts = ({ modalType, closeModal, handleSubmit, data }: P
         e.preventDefault();
         setIsLoading(true)
 
-        handleSubmit(form)
+        handleSubmit(form, location?.lat, location?.lng)
         console.log(form)
         // setIsLoading(false)
     }
@@ -74,45 +83,45 @@ const CreateOrUpdateProducts = ({ modalType, closeModal, handleSubmit, data }: P
     }
 
 
+
+
     return (
         <Modal
             isOpen={modalType === "add" || modalType === 'edit'}
             onClose={closeModal}
-            title={modalType === "add" ? "Add Product" : "Edit Product"}
+            title="Demo Semua Tipe Input"
         >
             <div className="overflow-auto max-h-[80vh] no-scrollbar ">
                 <form onSubmit={onSubmit} className="space-y-5">
-                    <FormField
-                        label="Category"
-                        name="category_id"
-                        type="autocomplete"
-                        value={form.category_id}
-                        options={dataCategories}
-                        onChange={update}
-                        disabled={isLoading} required />
 
-                    <FormField label="Name Product" name="name" type="text" value={form.name} onChange={update} disabled={isLoading} required />
-
-                    <FormField label="Price" name="price" type="rupiah" value={form.price} onChange={update} disabled={isLoading} required />
-
+                    <FormField label="Name" name="name" type="text" value={form.name} onChange={update} disabled={isLoading} required />
+                    <FormField label="Telephone" name="telp" type="text" value={form.telp} onChange={update} disabled={isLoading} required />
+                    <FormField label="Open Until" name="open_until" type="time" value={form.open_until} onChange={update} disabled={isLoading} required />
 
                     <FormField
-                        label="Deskription"
-                        name="description"
+                        label="Address"
+                        name="address"
                         type="textarea"
-                        value={form.description}
-                        onChange={update}
-                        disabled={isLoading} />
-
-                    <FormField
-                        label="Foto Produk"
-                        name="image"
-                        type="image"
-                        value={form.image}
+                        value={form.address}
                         onChange={update}
                         disabled={isLoading}
-                    />
+                        required />
 
+                    <div className="space-y-4">
+                        <h1 className="text-xl font-bold">Pilih Lokasi</h1>
+
+                        <GoogleMapPicker
+                            data={data}
+                            onChange={(lat, lng) => {
+                                setLocation({ lat, lng })
+                            }}
+                        />
+
+                        <div className="bg-gray-100 p-4 rounded">
+                            <p>Latitude: {location.lat}</p>
+                            <p>Longitude: {location.lng}</p>
+                        </div>
+                    </div>
                     <div className="flex justify-end pt-4">
                         <button
                             type="button"
@@ -138,4 +147,4 @@ const CreateOrUpdateProducts = ({ modalType, closeModal, handleSubmit, data }: P
     );
 };
 
-export default CreateOrUpdateProducts;
+export default CreateOrUpdateOutlets;
