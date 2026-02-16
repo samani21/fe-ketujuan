@@ -1,6 +1,6 @@
 export const appConfig = {
-  apiUrl: "http://be-ketujuan.test",  //local
-  //   apiUrl: "https://api.katujuan.net", //production
+  // apiUrl: "http://api-katujuan.local", //local
+  apiUrl: "https://api.katujuan.net", //production
   appDomain: "localhost", //local
   //   appDomain: "katujuan.net", //production
   isProduction: 'production',
