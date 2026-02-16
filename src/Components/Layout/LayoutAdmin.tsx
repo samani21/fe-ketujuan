@@ -86,34 +86,31 @@ const MenuSidebar = [
         url: '/dashboard',
     },
     {
-        label: "Categorie",
-        icon: <Layers2 size={20} />,
-        url: '/categories',
-    },
-    {
-        label: "Products",
-        icon: <ShoppingBag size={20} />,
-        url: '/products',
-        child: [
-            {
-                label: "Product List",
-                url: '/products'
-            },
-            {
-                label: "Stock",
-                url: '/products/stock'
-            }
-        ]
-    },
-    {
         label: "Manage",
         icon: <Settings size={20} />,
         url: '/manage',
         child: [
             {
+                label: "Outlets",
+                url: '/manage/outlets'
+            },
+            {
+                label: "Categorie",
+                url: '/manage/categories'
+            },
+            {
+                label: "Product List",
+                url: '/manage/products'
+            },
+            {
+                label: "Stock",
+                url: '/manage/products/stock'
+            },
+            {
                 label: "Color",
                 url: '/manage/color'
-            }
+            },
+
         ]
     },
     {

@@ -68,9 +68,17 @@ const ProductsPage = () => {
             header: "Status Stock",
             key: "status_stock",
             render: (row) => (
-                <span className={`px-2 py-1 text-xs font-semibold rounded-lg ${row?.status_stock ? "bg-green-100" : "bg-red-100"}`}>
-                    {row?.status_stock ? "Tersedia" : "Habis"}
-                </span>
+                <div className='flex items-center'>
+                    <button
+                        onClick={() => handleToggleStock(row)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${row.status_stock ? 'bg-[var(--primary-color)]' : 'bg-neutral-200'}`}
+                    >
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${row.status_stock ? 'translate-x-6' : 'translate-x-1'}`} />
+                    </button>
+                    <span className={`ml-3 text-xs font-bold ${row.status_stock ? 'text-[var(--primary-color)]' : 'text-neutral-400'}`}>
+                        {row.status_stock ? 'Tersedia' : 'Habis'}
+                    </span>
+                </div>
             )
         },
         {
@@ -171,6 +179,24 @@ const ProductsPage = () => {
                 type: "error",
                 isOpen: true
 
+            })
+        }
+    }
+
+    const handleToggleStock = async (row: ProductsType) => {
+        const formData = new FormData();
+        formData.append('status_stock', row?.status_stock ? "0" : "1")
+        const res = await Post<any, FormData>(`/v1/products/${row?.id}`, formData);
+        if (res?.status == "success") {
+            {
+                setModalType(null)
+                setData(null)
+            };
+            getProducts();
+            setShowNotif({
+                message: res?.message,
+                type: res?.status,
+                isOpen: true
             })
         }
     }
