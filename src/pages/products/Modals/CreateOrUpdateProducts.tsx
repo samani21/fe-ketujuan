@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 import FormField from "@/Components/Component/CRUD/FormField";
 import Modal from "@/Components/Component/Modal";
 import { Save } from "lucide-react";
-import IconSelectAutocomplete from "../IconSelectAutocomplete";
 import { Get } from "@/utils/apiWithToken";
+import { ProductCategorieType } from "@/types/Client/ProductCategories";
 
 type Props = {
     modalType: string | null;
@@ -19,8 +19,7 @@ type Option = {
     value: string;
 }
 
-
-const ExampleFormInput = ({ modalType, closeModal, handleSubmit, data }: Props) => {
+const CreateOrUpdateProducts = ({ modalType, closeModal, handleSubmit, data }: Props) => {
     const [errors, setErrors] = useState<any>({});
     const [isLoading, setIsLoading] = useState(false);
     const [dataCategories, setDataCategories] = useState<Option[]>([])
@@ -75,8 +74,6 @@ const ExampleFormInput = ({ modalType, closeModal, handleSubmit, data }: Props) 
     }
 
 
-
-
     return (
         <Modal
             isOpen={modalType === "add" || modalType === 'edit'}
@@ -85,61 +82,28 @@ const ExampleFormInput = ({ modalType, closeModal, handleSubmit, data }: Props) 
         >
             <div className="overflow-auto max-h-[80vh] no-scrollbar ">
                 <form onSubmit={onSubmit} className="space-y-5">
-
-                    <FormField label="text" name="text" type="text" value={form.text} onChange={update} disabled={isLoading} required />
-
-                    <FormField label="number" name="number" type="number" value={form.number} onChange={update} disabled={isLoading} />
-
-                    <FormField label="date" name="date" type="date" value={form.date} onChange={update} disabled={isLoading} />
-
-                    <FormField label="email" name="email" type="email" value={form.email} onChange={update} disabled={isLoading} />
-
-                    <FormField label="password" name="password" type="password" value={form.password} onChange={update} disabled={isLoading} />
-
-                    <FormField label="rupiah" name="rupiah" type="rupiah" value={form.rupiah} onChange={update} disabled={isLoading} />
-
                     <FormField
-                        label="select"
-                        name="select"
+                        label="Category"
+                        name="category_id"
                         type="select"
-                        value={form.select}
-                        options={[
-                            { label: "Option 1", value: "1" },
-                            { label: "Option 2", value: "2" }
-                        ]}
+                        value={form.category_id}
+                        options={dataCategories}
                         onChange={update}
-                        disabled={isLoading} />
+                        disabled={isLoading} required />
+
+                    <FormField label="Name Product" name="name" type="text" value={form.name} onChange={update} disabled={isLoading} required />
+
+                    <FormField label="Price" name="price" type="rupiah" value={form.price} onChange={update} disabled={isLoading} required />
+
 
                     <FormField
-                        label="textarea"
-                        name="textarea"
+                        label="Deskription"
+                        name="description"
                         type="textarea"
-                        value={form.textarea}
+                        value={form.description}
                         onChange={update}
                         disabled={isLoading} />
 
-                    <FormField
-                        label="checkbox"
-                        name="checkbox"
-                        type="checkbox"
-                        value={form.checkbox}
-                        onChange={update}
-                        disabled={isLoading} />
-
-                    <FormField
-                        label="switch"
-                        name="switch"
-                        type="switch"
-                        value={form.switch}
-                        onChange={update}
-                        disabled={isLoading} />
-
-                    <IconSelectAutocomplete
-                        value={''}
-                        onChange={update}
-                        disabled={isLoading}
-                        data={null}
-                    />
                     <FormField
                         label="Foto Produk"
                         name="image"
@@ -148,6 +112,7 @@ const ExampleFormInput = ({ modalType, closeModal, handleSubmit, data }: Props) 
                         onChange={update}
                         disabled={isLoading}
                     />
+
                     <div className="flex justify-end pt-4">
                         <button
                             type="button"
@@ -173,4 +138,4 @@ const ExampleFormInput = ({ modalType, closeModal, handleSubmit, data }: Props) 
     );
 };
 
-export default ExampleFormInput;
+export default CreateOrUpdateProducts;

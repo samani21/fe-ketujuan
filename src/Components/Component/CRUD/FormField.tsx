@@ -17,9 +17,9 @@ type Props = {
     | 'select'
     | 'rupiah'
     | 'textarea'
+    | 'image'
     | 'checkbox'
-    | 'switch';
-
+    | 'switch'
     value: any;
     onChange: (name: string, value: any) => void;
     options?: Option[];
@@ -73,6 +73,20 @@ const FormField = ({
         const raw = e.target.value.replace(/\D/g, '');
         onChange(name, raw ? Number(raw) : '');
     }
+
+    const handleImage = (e: any) => {
+        if (disabled) return;
+
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            alert('File harus berupa gambar');
+            return;
+        }
+
+        onChange(name, file);
+    };
 
     return (
         <div className="space-y-1.5">
@@ -144,16 +158,68 @@ const FormField = ({
             )}
 
             {/* INPUT */}
-            {!['select', 'textarea', 'checkbox', 'switch'].includes(type) && (
-                <input
-                    type={type === 'rupiah' ? 'text' : type}
-                    disabled={disabled}
-                    required={required}
-                    value={type === 'rupiah' ? formatRupiah(value) : value}
-                    onChange={type === 'rupiah' ? handleRupiah : handleInput}
-                    className={baseClass}
-                />
+            {!['select', 'textarea', 'checkbox', 'switch', 'image'].includes(type)
+                && (
+                    <input
+                        type={type === 'rupiah' ? 'text' : type}
+                        disabled={disabled}
+                        required={required}
+                        value={type === 'rupiah' ? formatRupiah(value) : value}
+                        onChange={type === 'rupiah' ? handleRupiah : handleInput}
+                        className={baseClass}
+                    />
+                )}
+            {type === "image" && (
+                <div className="space-y-3">
+                    <input
+                        type="file"
+                        accept="image/*"
+                        disabled={disabled}
+                        onChange={handleImage}
+                        id={`upload-${name}`}
+                        className='hidden'
+                        style={{ display: "none" }}
+                    />
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            if (!disabled) {
+                                document.getElementById(`upload-${name}`)?.click();
+                            }
+                        }}
+                        className={`
+                flex items-center justify-center
+                w-full h-40 border-2 border-dashed rounded-xl
+                transition-all text-sm
+                ${disabled
+                                ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                                : "bg-[#F8FAFC] hover:border-[var(--primary-color)] border-slate-300"
+                            }
+            `}
+                    >
+                        {!value && "Upload Gambar"}
+
+                        {value instanceof File && (
+                            <img
+                                src={URL.createObjectURL(value)}
+                                alt="preview"
+                                className="h-full object-contain rounded-lg"
+                            />
+                        )}
+
+                        {typeof value === "string" && value && (
+                            <img
+                                src={value}
+                                alt="preview"
+                                className="h-full object-contain rounded-lg"
+                            />
+                        )}
+                    </button>
+                </div>
             )}
+
+
 
             {error && (
                 <p className="text-xs text-red-500 font-medium">

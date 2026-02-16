@@ -7,9 +7,9 @@ import { Column } from '@/Components/Component/CRUD/Type';
 import { Delete, Get, Post } from '@/utils/apiWithToken';
 import * as Icons from 'lucide-react';
 import Notification from '@/Components/Component/Notification';
-import { ProductsType } from '@/types/Client/Products'; import ExampleFormInput from './ExampleFormInput';
-import ExampleDelete from './ExampleDelete';
-;
+import { ProductsType } from '@/types/Client/Products';
+import ModalDeleteProducts from './Modals/ModalDeleteProducts';
+import CreateOrUpdateProducts from './Modals/CreateOrUpdateProducts';
 
 
 const ProductsPage = () => {
@@ -191,11 +191,11 @@ const ProductsPage = () => {
 
                 {
                     modalType === 'add' || modalType === 'edit' ?
-                        <ExampleFormInput modalType={modalType} closeModal={() => {
+                        <CreateOrUpdateProducts modalType={modalType} closeModal={() => {
                             setModalType(null)
                             setData(null)
                         }} handleSubmit={handleSubmit} data={data} /> :
-                        <ExampleDelete modalType={modalType} closeModal={() => {
+                        <ModalDeleteProducts modalType={modalType} closeModal={() => {
                             setModalType(null)
                             setData(null)
                         }} data={data} handleDelete={(v) => handleDelete()} />

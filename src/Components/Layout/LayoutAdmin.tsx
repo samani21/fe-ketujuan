@@ -91,6 +91,11 @@ const MenuSidebar = [
         url: '/categories',
     },
     {
+        label: "Products",
+        icon: <ShoppingBag size={20} />,
+        url: '/products',
+    },
+    {
         label: "Manage",
         icon: <Settings size={20} />,
         url: '/manage',
