@@ -19,31 +19,26 @@ type Option = {
     value: string;
 }
 
-const CreateOrUpdateProducts = ({ modalType, closeModal, handleSubmit, data }: Props) => {
-    const [errors, setErrors] = useState<any>({});
+const CreateOrUpdateProductStock = ({ modalType, closeModal, handleSubmit, data }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [dataCategories, setDataCategories] = useState<Option[]>([])
+    const [dataProducts, setDataProducts] = useState<Option[]>([])
     const [form, setForm] = useState<any>({
-        category_id: "",
-        name: "",
-        description: "",
-        price: "",
-        image: null,
+        product_id: "",
+        stock: "",
+        date: "",
     });
 
     useEffect(() => {
         if (data) {
             setForm({
-                name: data?.name,
-                image: data?.image,
-                description: data?.description,
-                price: data?.price,
-                category_id: data?.category_id,
+                product_id: data?.product_id,
+                stock: data?.stock,
+                date: data?.date,
             })
         }
     }, [data])
     useEffect(() => {
-        getCategories();
+        getProducts();
     }, [])
     const update = (name: string, value: any) => {
         setForm((prev: any) => ({ ...prev, [name]: value }));
@@ -57,16 +52,16 @@ const CreateOrUpdateProducts = ({ modalType, closeModal, handleSubmit, data }: P
         console.log(form)
         // setIsLoading(false)
     }
-    const getCategories = async () => {
+    const getProducts = async () => {
         try {
-            const res = await Get<{ status: string, data: any }>(`/v1/product-categorie?per_page=10000`);
+            const res = await Get<{ status: string, data: any }>(`/v1/products?per_page=10000`);
             if (res?.status === 'success') {
-                const categories = res?.data?.data?.map((item: any) => ({
+                const products = res?.data?.data?.map((item: any) => ({
                     label: item.name,   // sesuaikan dengan field API
                     value: item.id,
                 })) ?? [];
 
-                setDataCategories(categories);
+                setDataProducts(products);
             }
         } catch (e) {
 
@@ -78,40 +73,22 @@ const CreateOrUpdateProducts = ({ modalType, closeModal, handleSubmit, data }: P
         <Modal
             isOpen={modalType === "add" || modalType === 'edit'}
             onClose={closeModal}
-            title={modalType === "add" ? "Add Product" : "Edit Product"}
+            title={modalType === "add" ? "Add Stock Product" : "Edit Stock Product"}
         >
             <div className="overflow-auto max-h-[80vh] no-scrollbar ">
                 <form onSubmit={onSubmit} className="space-y-5">
                     <FormField
-                        label="Category"
-                        name="category_id"
-                        type="select"
-                        value={form.category_id}
-                        options={dataCategories}
+                        label="Product"
+                        name="product_id"
+                        type="autocomplete"
+                        value={form.product_id}
+                        options={dataProducts}
                         onChange={update}
                         disabled={isLoading} required />
 
-                    <FormField label="Name Product" name="name" type="text" value={form.name} onChange={update} disabled={isLoading} required />
+                    <FormField label="Stock" name="stock" type="number" value={form.stock} onChange={update} disabled={isLoading} required />
 
-                    <FormField label="Price" name="price" type="rupiah" value={form.price} onChange={update} disabled={isLoading} required />
-
-
-                    <FormField
-                        label="Deskription"
-                        name="description"
-                        type="textarea"
-                        value={form.description}
-                        onChange={update}
-                        disabled={isLoading} />
-
-                    <FormField
-                        label="Foto Produk"
-                        name="image"
-                        type="image"
-                        value={form.image}
-                        onChange={update}
-                        disabled={isLoading}
-                    />
+                    <FormField label="date" name="date" type="date" value={form.date} onChange={update} disabled={isLoading} required />
 
                     <div className="flex justify-end pt-4">
                         <button
@@ -138,4 +115,4 @@ const CreateOrUpdateProducts = ({ modalType, closeModal, handleSubmit, data }: P
     );
 };
 
-export default CreateOrUpdateProducts;
+export default CreateOrUpdateProductStock;

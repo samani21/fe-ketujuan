@@ -14,6 +14,7 @@ type Props = {
     | 'date'
     | 'email'
     | 'password'
+    | 'autocomplete'
     | 'select'
     | 'rupiah'
     | 'textarea'
@@ -44,7 +45,14 @@ const FormField = ({
     error,
     disabled
 }: Props) => {
+    const [search, setSearch] = React.useState('');
+    const [open, setOpen] = React.useState(false);
 
+    const selectedLabel = options.find(opt => opt.value === value)?.label || '';
+
+    const filteredOptions = options.filter(opt =>
+        opt.label.toLowerCase().includes(search.toLowerCase())
+    );
     const baseClass = `
         w-full px-4 py-3 border rounded-xl outline-none
         text-sm font-medium transition-all
@@ -158,7 +166,7 @@ const FormField = ({
             )}
 
             {/* INPUT */}
-            {!['select', 'textarea', 'checkbox', 'switch', 'image'].includes(type)
+            {!['select', 'textarea', 'checkbox', 'switch', 'image', 'autocomplete'].includes(type)
                 && (
                     <input
                         type={type === 'rupiah' ? 'text' : type}
@@ -219,6 +227,49 @@ const FormField = ({
                 </div>
             )}
 
+            {/* SELECT AUTOCOMPLETE */}
+            {type === 'autocomplete' && (
+                <div className="relative">
+                    <input
+                        type="text"
+                        disabled={disabled}
+                        required={required}
+                        value={open ? search : selectedLabel}
+                        onFocus={() => {
+                            if (!disabled) {
+                                setOpen(true);
+                                setSearch('');
+                            }
+                        }}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className={baseClass}
+                        placeholder="Cari..."
+                    />
+
+                    {open && (
+                        <div className="absolute z-50 mt-2 w-full bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                            {filteredOptions.length === 0 && (
+                                <div className="px-4 py-3 text-sm text-slate-400">
+                                    Tidak ditemukan
+                                </div>
+                            )}
+
+                            {filteredOptions.map(opt => (
+                                <div
+                                    key={opt.value}
+                                    onClick={() => {
+                                        onChange(name, opt.value);
+                                        setOpen(false);
+                                    }}
+                                    className="px-4 py-3 text-sm hover:bg-slate-100 cursor-pointer transition"
+                                >
+                                    {opt.label}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
 
 
             {error && (

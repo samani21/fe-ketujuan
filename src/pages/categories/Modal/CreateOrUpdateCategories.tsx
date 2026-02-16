@@ -54,7 +54,7 @@ const CreateOrUpdateCategories = ({ modalType, closeModal, handleSubmit, data }:
         <Modal
             isOpen={modalType === "add" || modalType === 'edit'}
             onClose={closeModal}
-            title="Demo Semua Tipe Input"
+            title={modalType === "add" ? "Add Category Product" : "Edit Category Product"}
         >
             <div className="overflow-auto max-h-[80vh] no-scrollbar ">
                 <form onSubmit={submit} className="space-y-5">

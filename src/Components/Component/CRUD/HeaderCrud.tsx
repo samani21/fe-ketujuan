@@ -9,9 +9,13 @@ type Props = {
     setDebouncedSearch?: (val: string) => void;
     loading: boolean
     setLoading: (val: boolean) => void;
+    startDate?: string
+    endDate?: string
+    setStartDate?: (val: string) => void
+    setEndDate?: (val: string) => void
 }
 
-const HeaderCrud = ({ title, subtitle, setModalType, debouncedSearch, setDebouncedSearch, loading, setLoading }: Props) => {
+const HeaderCrud = ({ title, subtitle, setModalType, debouncedSearch, setDebouncedSearch, loading, setLoading, startDate, endDate, setStartDate, setEndDate, }: Props) => {
     const [search, setSearch] = useState('');
     useEffect(() => {
         setLoading(true);
@@ -41,7 +45,7 @@ const HeaderCrud = ({ title, subtitle, setModalType, debouncedSearch, setDebounc
             </div>
 
             <div className="flex items-center gap-3">
-                <div className="relative group">
+                <div className="relative group space-x-4">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
 
                     <input
@@ -50,7 +54,24 @@ const HeaderCrud = ({ title, subtitle, setModalType, debouncedSearch, setDebounc
                         onChange={(e) => setSearch(e.target.value)}
                         className="pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-indigo-500/5 focus:border-[var(--primary-color)] outline-none w-full md:w-64 transition-all shadow-sm"
                     />
+                    {
+                        setStartDate && setEndDate && <>
+                            <input
+                                type="date"
+                                value={startDate}
+                                onChange={(e) => setStartDate?.(e.target.value)}
+                                className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-indigo-500/5 focus:border-[var(--primary-color)] outline-none shadow-sm"
+                            />
 
+                            {/* 📅 End Date */}
+                            <input
+                                type="date"
+                                value={endDate}
+                                onChange={(e) => setEndDate?.(e.target.value)}
+                                className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-indigo-500/5 focus:border-[var(--primary-color)] outline-none shadow-sm"
+                            />
+                        </>
+                    }
                     {loading && (
                         <div className="absolute right-3 top-1/2 -translate-y-1/2">
                             <div className="w-4 h-4 border-2 border-slate-300 border-t-[var(--primary-color)] rounded-full animate-spin" />

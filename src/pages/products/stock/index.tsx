@@ -7,18 +7,20 @@ import { Column } from '@/Components/Component/CRUD/Type';
 import { Delete, Get, Post } from '@/utils/apiWithToken';
 import * as Icons from 'lucide-react';
 import Notification from '@/Components/Component/Notification';
-import { ProductsType } from '@/types/Client/Products';
-import ModalDeleteProducts from './Modals/ModalDeleteProducts';
-import CreateOrUpdateProducts from './Modals/CreateOrUpdateProducts';
+import { ProductStockType } from '@/types/Client/ProductStock';
+import CreateOrUpdateProductStock from './Modals/CreateOrUpdateProductStock';
+import ModalDeleteProductStock from './Modals/ModalDeleteProductStock';
 
 
 const ProductsPage = () => {
     const [modalType, setModalType] = useState<string | null>(null);
-    const [datProducts, setDataProducts] = useState<ProductsType[]>([])
+    const [datProducts, setDataProducts] = useState<ProductStockType[]>([])
+    const [startDate, setStartDate] = useState('')
+    const [endDate, setEndDate] = useState('')
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState<number>(1)
     const [debouncedSearch, setDebouncedSearch] = useState<string>('');
-    const [data, setData] = useState<ProductsType | null>(null);
+    const [data, setData] = useState<ProductStockType | null>(null);
     const [lastPage, setLastPage] = useState<number>(1);
     const [countData, setCountData] = useState<number>(1);
     const [showNotif, setShowNotif] = useState<any>({
@@ -29,49 +31,24 @@ const ProductsPage = () => {
 
     useEffect(() => {
 
-        getProducts()
+        getStock()
         setLoading(false);
-    }, [debouncedSearch, currentPage]);
+    }, [debouncedSearch, currentPage, startDate, endDate]);
 
 
-    const columnTable: Column<ProductsType>[] = [
-        {
-            header: "Image",
-            key: "custom",
-            render: (row) => (
-                <img src={row?.image} className='w-32' />
-            )
-        },
+    const columnTable: Column<ProductStockType>[] = [
+
         {
             header: "Name Product",
             key: "name",
         },
         {
-            header: "Name Category",
-            key: "category.name",
-            render: (row) => row.category?.name ?? "-"
-        },
-        {
-            header: "Price",
-            key: "price",
-            type: "rupiah",
-        },
-        {
-            header: "Description",
-            key: "description",
-        },
-        {
             header: "Stock",
-            key: "stock_sum_stock",
+            key: "stock",
         },
         {
-            header: "Status Stock",
-            key: "status_stock",
-            render: (row) => (
-                <span className={`px-2 py-1 text-xs font-semibold rounded-lg ${row?.status_stock ? "bg-green-100" : "bg-red-100"}`}>
-                    {row?.status_stock ? "Tersedia" : "Habis"}
-                </span>
-            )
+            header: "Date",
+            key: "date",
         },
         {
             header: "Action",
@@ -91,9 +68,9 @@ const ProductsPage = () => {
         }
     ]
 
-    const getProducts = async () => {
+    const getStock = async () => {
         try {
-            const res = await Get<{ status: string, data: any }>(`/v1/products?page=${currentPage}&per_page=10&search=${debouncedSearch}`);
+            const res = await Get<{ status: string, data: any }>(`/v1/product-stock?page=${currentPage}&per_page=10&search=${debouncedSearch ?? ''}${startDate && `&start_date=${startDate}`}${endDate && `&end_date=${endDate}`}`);
             if (res?.status === 'success') {
                 setDataProducts(res?.data?.data)
                 setLastPage(res?.data?.last_page)
@@ -106,20 +83,15 @@ const ProductsPage = () => {
 
     const handleSubmit = async (form: any) => {
         try {
-            const formData = new FormData();
-            formData.append('category_id', form?.category_id);
-            formData.append('name', form?.name);
-            formData.append('price', form?.price);
-            formData.append('description', form?.description);
-            formData.append('image', form?.image ?? null);
+
             if (data) {
-                const res = await Post<any, FormData>(`/v1/products/${data?.id}`, formData);
+                const res = await Post<any, FormData>(`/v1/product-stock/${data?.id}`, form);
                 if (res?.status == "success") {
                     {
                         setModalType(null)
                         setData(null)
                     };
-                    getProducts();
+                    getStock();
                     setShowNotif({
                         message: res?.message,
                         type: res?.status,
@@ -127,13 +99,13 @@ const ProductsPage = () => {
                     })
                 }
             } else {
-                const res = await Post<any, FormData>('/v1/products', formData);
+                const res = await Post<any, FormData>('/v1/product-stock', form);
                 if (res?.status == "success") {
                     {
                         setModalType(null)
                         setData(null)
                     };
-                    getProducts();
+                    getStock();
                     setShowNotif({
                         message: res?.message,
                         type: res?.status,
@@ -152,13 +124,13 @@ const ProductsPage = () => {
     }
     const handleDelete = async () => {
         try {
-            const res = await Delete<any>(`/v1/products/${data?.id}`);
+            const res = await Delete<any>(`/v1/product-stock/${data?.id}`);
             if (res?.status == "success") {
                 {
                     setModalType(null)
                     setData(null)
                 };
-                getProducts();
+                getStock();
                 setShowNotif({
                     message: res?.message,
                     type: res?.status,
@@ -177,13 +149,17 @@ const ProductsPage = () => {
     return (
         <LayoutAdmin>
             <div className='space-y-4'>
-                <HeaderCrud title={"List Products"}
+                <HeaderCrud title={"List Stock Products"}
                     // subtitle={"Kelola list kategori"}
                     setModalType={setModalType}
                     debouncedSearch={debouncedSearch}
                     setDebouncedSearch={setDebouncedSearch}
                     loading={loading}
-                    setLoading={setLoading} />
+                    setLoading={setLoading}
+                    startDate={startDate}
+                    setStartDate={setStartDate}
+                    endDate={endDate}
+                    setEndDate={setEndDate} />
                 <DynamicTable
                     columns={columnTable}
                     data={datProducts}
@@ -195,11 +171,11 @@ const ProductsPage = () => {
 
                 {
                     modalType === 'add' || modalType === 'edit' ?
-                        <CreateOrUpdateProducts modalType={modalType} closeModal={() => {
+                        <CreateOrUpdateProductStock modalType={modalType} closeModal={() => {
                             setModalType(null)
                             setData(null)
                         }} handleSubmit={handleSubmit} data={data} /> :
-                        <ModalDeleteProducts modalType={modalType} closeModal={() => {
+                        <ModalDeleteProductStock modalType={modalType} closeModal={() => {
                             setModalType(null)
                             setData(null)
                         }} data={data} handleDelete={(v) => handleDelete()} />

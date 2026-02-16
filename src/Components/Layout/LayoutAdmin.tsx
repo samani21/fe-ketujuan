@@ -94,6 +94,16 @@ const MenuSidebar = [
         label: "Products",
         icon: <ShoppingBag size={20} />,
         url: '/products',
+        child: [
+            {
+                label: "Product List",
+                url: '/products'
+            },
+            {
+                label: "Stock",
+                url: '/products/stock'
+            }
+        ]
     },
     {
         label: "Manage",
