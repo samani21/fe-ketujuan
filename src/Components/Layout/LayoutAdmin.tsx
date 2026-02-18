@@ -110,7 +110,10 @@ const MenuSidebar = [
                 label: "Color",
                 url: '/manage/color'
             },
-
+            {
+                label: "Info",
+                url: '/manage/info'
+            },
         ]
     },
     {

@@ -27,6 +27,7 @@ export interface Branding {
 export interface StoreData {
   id: number;
   name: string;
+  short_name?: string;
   logo: string | null;
   business_fields: string | null;
   address: string | null;
@@ -37,6 +38,7 @@ export interface StoreData {
   email?: string;
   business_hour?: BusinessHour[];
   branding: Branding;
+  status?: boolean;
 }
 
 export const storeService = {
