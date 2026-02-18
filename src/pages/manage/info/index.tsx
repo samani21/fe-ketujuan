@@ -5,6 +5,8 @@ import api from '@/utils/api';
 import { Post } from '@/utils/apiWithToken';
 import { CheckCircle2, Database, Globe, Info, LayoutDashboard, Loader2, Mail, Phone, Save } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
+import SubdomainUpdateModal from './Modal/SubdomainUpdateModal';
+import Notification from '@/Components/Component/Notification';
 type Props = {}
 
 const InfoPage = () => {
@@ -19,6 +21,12 @@ const InfoPage = () => {
     const [subdomain, setSubdomain] = useState<string>('');
     const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
     const [isChecking, setIsChecking] = useState<boolean>(false);
+    const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+    const [showNotif, setShowNotif] = useState<any>({
+        message: '',
+        type: '',
+        isOpen: false,
+    });
     useEffect(() => {
         setForm({
             name: infoStore?.name,
@@ -74,6 +82,17 @@ const InfoPage = () => {
             const res = await Post<any, FormData>(`/v1/client-update/${infoStore?.id}`, formData);
             if (res?.status == "success") {
                 setIsLoading(false);
+                if (infoStore?.subdomain != subdomain) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('client');
+                    localStorage.removeItem('user');
+                    setIsOpenModal(true);
+                }
+                setShowNotif({
+                    message: res?.message,
+                    type: res?.status,
+                    isOpen: true
+                })
             } else {
                 setIsLoading(false);
             }
@@ -263,6 +282,15 @@ const InfoPage = () => {
                 </div>
 
             </form>
+
+            {
+                isOpenModal &&
+                <SubdomainUpdateModal isOpen={isOpenModal} setIsOpen={setIsOpenModal} />
+            }
+            {
+                showNotif?.isOpen &&
+                <Notification onClose={() => setShowNotif(false)} message={showNotif?.message} type={showNotif?.type} />
+            }
         </LayoutAdmin>
     )
 }
