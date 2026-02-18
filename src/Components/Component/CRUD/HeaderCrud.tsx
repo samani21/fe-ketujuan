@@ -13,9 +13,10 @@ type Props = {
     endDate?: string
     setStartDate?: (val: string) => void
     setEndDate?: (val: string) => void
+    isAdd?: boolean;
 }
 
-const HeaderCrud = ({ title, subtitle, setModalType, debouncedSearch, setDebouncedSearch, loading, setLoading, startDate, endDate, setStartDate, setEndDate, }: Props) => {
+const HeaderCrud = ({ title, subtitle, setModalType, debouncedSearch, setDebouncedSearch, loading, setLoading, startDate, endDate, setStartDate, setEndDate, isAdd = true }: Props) => {
     const [search, setSearch] = useState('');
     useEffect(() => {
         setLoading(true);
@@ -78,12 +79,15 @@ const HeaderCrud = ({ title, subtitle, setModalType, debouncedSearch, setDebounc
                         </div>
                     )}
                 </div>
-                <button
-                    onClick={() => setModalType('add')}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-[var(--primary-color)] text-white rounded-xl font-bold hover:bg-[var(--primary-color)] transition-all shadow-lg shadow-indigo-100/50"
-                >
-                    <Plus size={18} /> Tambah
-                </button>
+                {
+                    isAdd &&
+                    <button
+                        onClick={() => setModalType('add')}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-[var(--primary-color)] text-white rounded-xl font-bold hover:bg-[var(--primary-color)] transition-all shadow-lg shadow-indigo-100/50"
+                    >
+                        <Plus size={18} /> Tambah
+                    </button>
+                }
             </div>
         </div>
     )
