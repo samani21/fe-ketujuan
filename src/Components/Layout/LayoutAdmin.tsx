@@ -111,6 +111,10 @@ const MenuSidebar = [
                 url: '/manage/color'
             },
             {
+                label: "Customers",
+                url: '/manage/customers'
+            },
+            {
                 label: "Info",
                 url: '/manage/info'
             },
