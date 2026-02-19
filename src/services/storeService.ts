@@ -1,5 +1,7 @@
 import api from '@/utils/api';
 import { ApiResponse } from '@/types/api';
+import { ProductType } from '@/types/Product';
+import { ProductCategorieType } from '@/types/Client/ProductCategories';
 
 export interface Outlet {
   id: number;
@@ -41,6 +43,11 @@ export interface StoreData {
   status?: boolean;
 }
 
+export interface FrontProducts {
+  products: ProductType[]
+  categories: ProductCategorieType[]
+}
+
 export const storeService = {
   getStoreInfo: async (lat?: number, lng?: number): Promise<ApiResponse<StoreData>> => {
     // Tambahkan lat & lng ke query params jika ada
@@ -57,6 +64,12 @@ export const storeService = {
   // Simpan Pesan ke Database
   sendMessage: async (formData: { name: string; email: string; message: string }): Promise<ApiResponse> => {
     const response = await api.post('/v1/front/messages', formData);
+    return response.data;
+  },
+
+  // API Ringan untuk halaman non-katalog
+  getProducts: async (): Promise<ApiResponse<Partial<FrontProducts>>> => {
+    const response = await api.get('/v1/front/products');
     return response.data;
   },
 };

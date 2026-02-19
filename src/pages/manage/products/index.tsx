@@ -39,7 +39,7 @@ const ProductsPage = () => {
             header: "Image",
             key: "custom",
             render: (row) => (
-                <img src={row?.image} className='w-32' />
+                <img src={row?.image} className='w-32 h-32 object-cover' />
             )
         },
         {
@@ -63,6 +63,9 @@ const ProductsPage = () => {
         {
             header: "Stock",
             key: "stock_sum_stock",
+            render: (row) => (
+                <div>{row?.stock_sum_stock ?? 0}</div>
+            )
         },
         {
             header: "Status Stock",

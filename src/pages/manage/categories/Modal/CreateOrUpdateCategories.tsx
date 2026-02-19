@@ -46,6 +46,7 @@ const CreateOrUpdateCategories = ({ modalType, closeModal, handleSubmit, data }:
             setErrors(newErrors);
             return
         }
+        setIsLoading(false)
         handleSubmit(form)
     }
 
@@ -64,7 +65,7 @@ const CreateOrUpdateCategories = ({ modalType, closeModal, handleSubmit, data }:
                         disabled={isLoading}
                         data={data}
                     />
-                    <FormField label="text" name="name" type="text" value={form.name} onChange={update} disabled={isLoading} required />
+                    <FormField label="Name Category" name="name" type="text" value={form.name} onChange={update} disabled={isLoading} required />
                     <div className="flex justify-end pt-4">
                         <button
                             type="button"

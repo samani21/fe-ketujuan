@@ -1,11 +1,11 @@
 import { StoreData } from '@/services/storeService';
-import { CategorieType } from '@/types/CategorieProduct'
+import { ProductCategorieType } from '@/types/Client/ProductCategories';
 import { Search, ShoppingBag } from 'lucide-react'
 import { useRouter } from 'next/router';
 import React, { useState } from 'react'
-
+import * as Icons from 'lucide-react';
 type Props = {
-    categories: CategorieType[];
+    categories: ProductCategorieType[];
     isPreview?: boolean;
     infoStore: StoreData | null;
 }
@@ -48,19 +48,22 @@ const HeaderStore = ({ categories, isPreview, infoStore }: Props) => {
 
             {/* --- Category Tabs (Mobile Scroll) --- */}
             <nav className="max-w-screen-md mx-auto px-4 pb-3 overflow-x-auto no-scrollbar flex space-x-2 scroll-smooth">
-                {categories.map((cat) => (
-                    <button
-                        key={cat.id}
-                        onClick={() => scrollToCategory(cat.name)}
-                        className={`flex items-center space-x-1.5 whitespace-nowrap px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 ${activeTab === cat.name
-                            ? 'bg-[var(--primary-color)] text-white shadow-md'
-                            : 'bg-neutral-100 text-neutral-500'
-                            }`}
-                    >
-                        {cat.icon}
-                        <span>{cat.name}</span>
-                    </button>
-                ))}
+                {categories.map((cat) => {
+                    const LucideIcon = cat.icon && (Icons as any)[cat.icon];
+                    return (
+                        <button
+                            key={cat.id}
+                            onClick={() => scrollToCategory(cat.name)}
+                            className={`flex items-center space-x-1.5 whitespace-nowrap px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 ${activeTab === cat.name
+                                ? 'bg-[var(--primary-color)] text-white shadow-md'
+                                : 'bg-neutral-100 text-neutral-500'
+                                }`}
+                        >
+                            <LucideIcon className="w-[16px] h-[16px]" />
+                            <span>{cat.name}</span>
+                        </button>
+                    )
+                })}
             </nav>
         </header>
     )

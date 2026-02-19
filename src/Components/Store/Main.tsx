@@ -1,11 +1,11 @@
-import { CategorieType } from '@/types/CategorieProduct'
+import { ProductCategorieType } from '@/types/Client/ProductCategories';
 import { ProductType } from '@/types/Product';
 import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import React from 'react'
 
 type Props = {
-    categories: CategorieType[];
+    categories: ProductCategorieType[];
     products: ProductType[];
     addToCart?: (P: ProductType) => void;
 }

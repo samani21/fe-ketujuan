@@ -1,25 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { ProductType } from '@/types/Product';
-import { CategorieDummy } from '@/data/CategorieDummy';
-import { ProductDummy } from '@/data/ProductsDummy';
 import HeaderStore from '@/Components/Store/Header';
-import { CategorieType } from '@/types/CategorieProduct';
 import MainStore from '@/Components/Store/Main';
 import FloatingCartStore from '@/Components/Store/FloatingCart';
 import ModalChckoutStore from '@/Components/Store/ModalChckout';
 import { StoreData, storeService } from '@/services/storeService';
+import { ProductCategorieType } from '@/types/Client/ProductCategories';
 
 export default function ProductPage() {
     const [cart, setCart] = useState<ProductType[]>([]);
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-    const [categories, setCategories] = useState<CategorieType[]>();
+    const [categories, setCategories] = useState<ProductCategorieType[]>();
     const [products, setProducts] = useState<ProductType[]>();
     const [infoStore, setInfoStore] = useState<StoreData | null>(null)
     useEffect(() => {
-        setCategories(CategorieDummy);
-        setProducts(ProductDummy);
         fetchStore();
-    })
+        fetchProducts();
+    }, [])
     // --- Logic Keranjang ---
     const addToCart = (product: ProductType) => {
         setCart(prev => {
@@ -57,6 +54,21 @@ export default function ProductPage() {
                     const b = parseInt(result.data?.branding?.primary_color.slice(5, 7), 16);
                     document.documentElement.style.setProperty('--primary-rgb', `${r}, ${g}, ${b}`);
                 }
+            }
+        } catch (error) {
+            console.error("Gagal memuat:", error);
+        } finally {
+        }
+    };
+
+    const fetchProducts = async () => {
+        try {
+            const res = await storeService.getProducts();
+            if (res?.status === 'success') {
+                setProducts(res?.data?.products);
+                setCategories(res?.data?.categories);
+            } else {
+                console.log('gagal')
             }
         } catch (error) {
             console.error("Gagal memuat:", error);
