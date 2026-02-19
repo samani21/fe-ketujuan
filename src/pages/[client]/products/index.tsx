@@ -12,7 +12,9 @@ export default function ProductPage() {
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
     const [categories, setCategories] = useState<ProductCategorieType[]>();
     const [products, setProducts] = useState<ProductType[]>();
-    const [infoStore, setInfoStore] = useState<StoreData | null>(null)
+    const [infoStore, setInfoStore] = useState<StoreData | null>(null);
+    const [activeTab, setActiveTab] = useState<string>('all');
+
     useEffect(() => {
         fetchStore();
         fetchProducts();
@@ -79,11 +81,11 @@ export default function ProductPage() {
     return (
         <div className="min-h-screen bg-slate-100 font-sans text-neutral-900 pb-32">
 
-            <HeaderStore categories={categories ?? []} infoStore={infoStore} />
+            <HeaderStore categories={categories ?? []} infoStore={infoStore} activeTab={activeTab} setActiveTab={setActiveTab} />
 
             {/* --- Main Content --- */}
 
-            <MainStore categories={categories ?? []} products={products ?? []} addToCart={addToCart} />
+            <MainStore categories={categories ?? []} products={products ?? []} addToCart={addToCart} setActiveTab={setActiveTab} />
 
             {/* --- Floating Mobile Cart --- */}
             <FloatingCartStore cartCount={cartCount} cartTotal={cartTotal} setIsCheckoutOpen={setIsCheckoutOpen} />

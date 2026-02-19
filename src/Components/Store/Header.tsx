@@ -8,16 +8,27 @@ type Props = {
     categories: ProductCategorieType[];
     isPreview?: boolean;
     infoStore: StoreData | null;
+    activeTab: string
+    setActiveTab: (val: string) => void;
 }
 
-const HeaderStore = ({ categories, isPreview, infoStore }: Props) => {
+const HeaderStore = ({ categories, isPreview, infoStore, activeTab, setActiveTab }: Props) => {
     const route = useRouter();
-    const [activeTab, setActiveTab] = useState<string>('Coffee');
     const scrollToCategory = (name: string) => {
         setActiveTab(name);
+
+        // Jika 'all', langsung scroll ke paling atas
+        if (name.toLowerCase() === 'all') {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+            return;
+        }
+
         const element = document.getElementById(name);
         if (element) {
-            const offset = 120; // Adjusted for mobile header
+            const offset = 120;
             const bodyRect = document.body.getBoundingClientRect().top;
             const elementRect = element.getBoundingClientRect().top;
             const elementPosition = elementRect - bodyRect;
@@ -48,22 +59,34 @@ const HeaderStore = ({ categories, isPreview, infoStore }: Props) => {
 
             {/* --- Category Tabs (Mobile Scroll) --- */}
             <nav className="max-w-screen-md mx-auto px-4 pb-3 overflow-x-auto no-scrollbar flex space-x-2 scroll-smooth">
-                {categories.map((cat) => {
-                    const LucideIcon = cat.icon && (Icons as any)[cat.icon];
-                    return (
-                        <button
-                            key={cat.id}
-                            onClick={() => scrollToCategory(cat.name)}
-                            className={`flex items-center space-x-1.5 whitespace-nowrap px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 ${activeTab === cat.name
-                                ? 'bg-[var(--primary-color)] text-white shadow-md'
-                                : 'bg-neutral-100 text-neutral-500'
-                                }`}
-                        >
-                            <LucideIcon className="w-[16px] h-[16px]" />
-                            <span>{cat.name}</span>
-                        </button>
-                    )
-                })}
+                {categories?.length > 0 ? <>
+                    {
+                        categories.map((cat) => {
+                            const LucideIcon = cat.icon && (Icons as any)[cat.icon];
+                            return (
+                                <button
+                                    key={cat.id}
+                                    onClick={() => scrollToCategory(cat.name)}
+                                    className={`flex items-center space-x-1.5 whitespace-nowrap px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 ${activeTab === cat.name
+                                        ? 'bg-[var(--primary-color)] text-white shadow-md'
+                                        : 'bg-neutral-100 text-neutral-500'
+                                        }`}
+                                >
+                                    <LucideIcon className="w-[16px] h-[16px]" />
+                                    <span>{cat.name}</span>
+                                </button>
+                            )
+                        })}
+                    <button
+                        onClick={() => scrollToCategory('all')}
+                        className={`flex items-center space-x-1.5 whitespace-nowrap px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 ${activeTab === 'all'
+                            ? 'bg-[var(--primary-color)] text-white shadow-md'
+                            : 'bg-neutral-100 text-neutral-500'
+                            }`}
+                    >
+                        <span>Semua</span>
+                    </button>
+                </> : <p className='text-gray-500'>Kategori tidak ditemukan!</p>}
             </nav>
         </header>
     )
