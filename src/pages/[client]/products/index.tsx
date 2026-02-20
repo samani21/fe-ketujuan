@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ProductType } from '@/types/Product';
 import HeaderStore from '@/Components/Store/Header';
 import MainStore from '@/Components/Store/Main';
@@ -6,6 +6,7 @@ import FloatingCartStore from '@/Components/Store/FloatingCart';
 import ModalChckoutStore from '@/Components/Store/ModalChckout';
 import { StoreData, storeService } from '@/services/storeService';
 import { ProductCategorieType } from '@/types/Client/ProductCategories';
+import { Get, Post } from '@/utils/apiWithToken';
 
 export default function ProductPage() {
     const [cart, setCart] = useState<ProductType[]>([]);
@@ -14,11 +15,37 @@ export default function ProductPage() {
     const [products, setProducts] = useState<ProductType[]>();
     const [infoStore, setInfoStore] = useState<StoreData | null>(null);
     const [activeTab, setActiveTab] = useState<string>('all');
-
+    const prevCartRef = useRef<string>("");
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     useEffect(() => {
         fetchStore();
         fetchProducts();
+        fetchCarts()
     }, [])
+
+    useEffect(() => {
+        const currentCart = JSON.stringify(cart);
+
+        if (prevCartRef.current !== currentCart) {
+            prevCartRef.current = currentCart;
+
+            // clear timeout sebelumnya
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+
+            // tunggu sampai cart benar-benar berhenti berubah
+            timeoutRef.current = setTimeout(() => {
+                updateQuantity();
+            }, 500); // delay 500ms (bisa ubah)
+        }
+
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, [cart]);
     // --- Logic Keranjang ---
     const addToCart = (product: ProductType) => {
         setCart(prev => {
@@ -30,15 +57,20 @@ export default function ProductPage() {
         });
     };
     const updateQty = (id: number, delta: number) => {
-        setCart(prev => prev.map(item => {
-            if (item.id === id) {
-                const newQty = Math.max(0, (item.qty ?? 0) + delta);
-                return { ...item, qty: newQty };
-            }
-            return item;
-        }).filter(item => (item.qty ?? 0) > 0));
-    };
+        setCart(prev => {
+            const updated = prev
+                .map(item => {
+                    if (item.id === id) {
+                        const newQty = Math.max(0, (item.qty ?? 0) + delta);
+                        return { ...item, qty: newQty };
+                    }
+                    return item;
+                })
+                .filter(item => (item.qty ?? 0) > 0);
 
+            return updated;
+        });
+    };
     const cartTotal = cart.reduce((sum, item) => sum + (item.price * (item.qty ?? 0)), 0);
     const cartCount = cart.reduce((sum, item) => sum + (item.qty ?? 0), 0);
 
@@ -77,6 +109,31 @@ export default function ProductPage() {
         } finally {
         }
     };
+
+    const fetchCarts = async () => {
+        try {
+            const res = await Get<{ status: string, data: ProductType[] }>('/v1/front/carts');
+            if (res?.status === 'success') {
+                setCart(res?.data);
+            }
+        } catch (e: any) {
+
+        }
+    }
+
+    const updateQuantity = async () => {
+        try {
+            const formData = new FormData();
+            for (let i = 0; cart?.length > i; i++) {
+                formData.append(`product_id[${i}]`, String(cart[i]?.id));
+                formData.append(`quantity[${i}]`, String(cart[i]?.qty));
+            }
+            const res = await Post('/v1/front/carts/quantity', formData);
+
+        } catch (e) {
+
+        }
+    }
 
     return (
         <div className="min-h-screen bg-slate-100 font-sans text-neutral-900 pb-32">
