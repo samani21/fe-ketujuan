@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CheckCircle2, Minus, Plus, Upload, X, Copy, Receipt } from 'lucide-react';
+import { CheckCircle2, Minus, Plus, Upload, X, Copy, Receipt, AlertTriangle } from 'lucide-react';
 import { ProductType } from '@/types/Product';
-import { Post } from '@/utils/apiWithToken';
+import { Get, Post } from '@/utils/apiWithToken';
 
 // --- Constants ---
 
@@ -35,11 +35,13 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal
     // --- States ---
     const [uploadProgress, setUploadProgress] = useState(0);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [isFailed, setIsFailed] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState<"transfer" | "va">("transfer");
     const [selectedBankCode, setSelectedBankCode] = useState<BanksType | null>(null);
     const [paymentData, setPaymentData] = useState({ code: '', invoice: '' });
     const [cartSnapshot, setCartSnapshot] = useState<ProductType[]>([]);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     // Mengunci tampilan keranjang saat proses checkout dimulai
     useEffect(() => {
@@ -62,6 +64,7 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal
             setIsSuccess(false);
             setIsLoading(false);
             setUploadProgress(0);
+            setSelectedFile(null);
             setPaymentMethod("transfer");
             setSelectedBankCode(null);
             setPaymentData({ code: '', invoice: '' });
@@ -79,6 +82,13 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal
             });
         }, 100);
     };
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setSelectedFile(file);
+            setUploadProgress(100); // Set 100 karena file sudah terpilih
+        }
+    };
 
     const handleCheckout = async (methodType: string) => {
         setIsLoading(true);
@@ -92,7 +102,9 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal
                 formData.append('payment_destination', String(selectedBank?.accountNumber));
 
             }
-
+            if (selectedFile) {
+                formData.append('payment_proof', selectedFile);
+            }
             cart.forEach((item, index) => {
                 formData.append(`cart[${index}][product_id]`, String(item.id));
                 formData.append(`cart[${index}][price]`, String(item.price));
@@ -119,12 +131,29 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal
         }
     };
 
-    const checkPaymentStatus = () => {
+    const checkPaymentStatus = async () => {
         setIsLoading(true);
-        setTimeout(() => {
-            setIsLoading(false);
-            setIsSuccess(true);
-        }, 1500);
+        try {
+            const res = await Get<{ success: boolean }>(`/v1/front/orders/status/${paymentData?.invoice}`)
+            if (res?.success) {
+                setTimeout(() => {
+                    setIsLoading(false);
+                    setIsSuccess(true);
+                }, 1500);
+            } else {
+                setTimeout(() => {
+                    setIsLoading(false);
+                    setIsFailed(true)
+                    setIsSuccess(false);
+                }, 1500);
+            }
+        } catch (e) {
+            setTimeout(() => {
+                setIsFailed(true)
+                setIsLoading(false);
+                setIsSuccess(false);
+            }, 1500);
+        }
     };
 
     return (
@@ -140,7 +169,7 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal
                     <motion.div
                         initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                        className="relative bg-white w-full max-w-lg rounded-t-[2rem] p-6 pb-10 max-h-[90vh] overflow-y-auto shadow-2xl"
+                        className="relative bg-white w-full max-w-lg rounded-t-[2rem] p-6 pb-10 max-h-[90vh] overflow-y-auto no-scrollbar shadow-2xl"
                     >
                         <div className="w-12 h-1 bg-neutral-200 rounded-full mx-auto mb-6" />
 
@@ -215,7 +244,11 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal
 
                                             {selectedBankCode && (
                                                 <>
-                                                    <UploadBox progress={uploadProgress} onUpload={handleFileUpload} />
+                                                    <UploadBox
+                                                        progress={uploadProgress}
+                                                        onFileChange={handleFileChange}
+                                                        fileName={selectedFile?.name}
+                                                    />
                                                     <button
                                                         disabled={uploadProgress < 100 || isLoading}
                                                         onClick={() => handleCheckout(selectedBankCode?.code)}
@@ -254,15 +287,24 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal
                                             </div>
 
                                             {paymentData.code && (
-                                                <button
-                                                    onClick={checkPaymentStatus}
-                                                    disabled={isLoading}
-                                                    className="w-full py-4 rounded-xl bg-[var(--primary-color)] text-white font-black text-sm shadow-lg shadow-orange-200 flex items-center justify-center"
-                                                >
-                                                    {isLoading ? (
-                                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                                    ) : 'CEK STATUS PEMBAYARAN'}
-                                                </button>
+                                                <>
+                                                    {
+                                                        isFailed &&
+                                                        <div className='flex items-center text-red-500 gap-2'>
+                                                            <AlertTriangle />
+                                                            <i className='text-red-500'>Invoice belum dibayar</i>
+                                                        </div>
+                                                    }
+                                                    <button
+                                                        onClick={checkPaymentStatus}
+                                                        disabled={isLoading}
+                                                        className="w-full py-4 rounded-xl bg-[var(--primary-color)] text-white font-black text-sm shadow-lg shadow-orange-200 flex items-center justify-center"
+                                                    >
+                                                        {isLoading ? (
+                                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                        ) : 'CEK STATUS PEMBAYARAN'}
+                                                    </button>
+                                                </>
                                             )}
                                         </div>
                                     )}
@@ -330,30 +372,47 @@ const SuccessState = ({ invoice, onClose }: { invoice: string, onClose: () => vo
     </div>
 );
 
-const UploadBox = ({ progress, onUpload }: { progress: number, onUpload: () => void }) => (
-    <div
-        onClick={onUpload}
-        className="group border-2 border-dashed border-neutral-200 rounded-2xl p-6 flex flex-col items-center justify-center bg-neutral-50/50 cursor-pointer hover:bg-neutral-50 hover:border-[var(--primary-color)]/30 transition-all"
-    >
-        {progress === 100 ? (
-            <div className="flex items-center space-x-2 text-green-600">
-                <CheckCircle2 size={20} />
-                <span className="text-xs font-bold uppercase tracking-wider">Bukti Transfer Terupload</span>
-            </div>
-        ) : (
-            <>
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 group-hover:scale-110 transition-transform">
-                    <Upload className="text-neutral-400 group-hover:text-[var(--primary-color)]" size={20} />
-                </div>
-                <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Klik untuk Upload Bukti</p>
-            </>
-        )}
-        {progress > 0 && progress < 100 && (
-            <div className="w-full h-1.5 bg-neutral-200 rounded-full mt-4 overflow-hidden">
-                <motion.div initial={{ width: 0 }} animate={{ width: `${progress}%` }} className="h-full bg-[var(--primary-color)]" />
-            </div>
-        )}
-    </div>
-);
+const UploadBox = ({ progress, onFileChange, fileName }: {
+    progress: number,
+    onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+    fileName?: string
+}) => {
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
 
+    return (
+        <div
+            onClick={() => fileInputRef.current?.click()}
+            className="group border-2 border-dashed border-neutral-200 rounded-2xl p-6 flex flex-col items-center justify-center bg-neutral-50/50 cursor-pointer hover:bg-neutral-50 hover:border-[var(--primary-color)]/30 transition-all"
+        >
+            {/* Input File Tersembunyi */}
+            <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={onFileChange}
+            />
+
+            {progress === 100 ? (
+                <div className="flex flex-col items-center text-green-600">
+                    <div className="flex items-center space-x-2">
+                        <CheckCircle2 size={20} />
+                        <span className="text-xs font-bold uppercase tracking-wider">File Terpilih</span>
+                    </div>
+                    {fileName && <p className="text-[10px] text-neutral-400 mt-1 truncate max-w-[200px]">{fileName}</p>}
+                </div>
+            ) : (
+                <>
+                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 group-hover:scale-110 transition-transform">
+                        <Upload className="text-neutral-400 group-hover:text-[var(--primary-color)]" size={20} />
+                    </div>
+                    <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest text-center">
+                        Klik untuk pilih Bukti Transfer<br />
+                        <span className="text-neutral-300 font-normal mt-1 block">(JPG, PNG max 2MB)</span>
+                    </p>
+                </>
+            )}
+        </div>
+    );
+};
 export default ModalCheckoutStore;
