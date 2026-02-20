@@ -10,7 +10,7 @@ type Props = {
     categories: ProductCategorieType[];
     products: ProductType[];
     addToCart?: (P: ProductType) => void;
-    setActiveTab: (val: string) => void;
+    setActiveTab?: (val: string) => void;
 }
 
 const MainStore = ({ categories, products, addToCart, setActiveTab }: Props) => {
@@ -64,7 +64,7 @@ const MainStore = ({ categories, products, addToCart, setActiveTab }: Props) => 
                 <section key={cat.id} id={cat.name} className="scroll-mt-32">
                     <div className="flex items-center justify-between mb-4 cursor-pointer" onClick={() => {
                         setSelectCategory(selectCategory === '' ? cat?.name : '')
-                        setActiveTab(selectCategory === '' ? cat?.name : 'all')
+                        setActiveTab && setActiveTab(selectCategory === '' ? cat?.name : 'all')
                     }}>
                         <h2 className="text-xl font-bold text-neutral-800">{cat.name}</h2>
                         <span className="text-xs text-[var(--primary-color)] font-medium">{selectCategory === '' ? "Lihat Semua" : "Kembali"}</span>

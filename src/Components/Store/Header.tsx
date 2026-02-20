@@ -4,18 +4,19 @@ import { Search, ShoppingBag } from 'lucide-react'
 import { useRouter } from 'next/router';
 import React, { useState } from 'react'
 import * as Icons from 'lucide-react';
+import Link from 'next/link';
 type Props = {
     categories: ProductCategorieType[];
     isPreview?: boolean;
     infoStore: StoreData | null;
-    activeTab: string
-    setActiveTab: (val: string) => void;
+    activeTab?: string
+    setActiveTab?: (val: string) => void;
 }
 
 const HeaderStore = ({ categories, isPreview, infoStore, activeTab, setActiveTab }: Props) => {
     const route = useRouter();
     const scrollToCategory = (name: string) => {
-        setActiveTab(name);
+        setActiveTab && setActiveTab(name);
 
         // Jika 'all', langsung scroll ke paling atas
         if (name.toLowerCase() === 'all') {
@@ -51,9 +52,9 @@ const HeaderStore = ({ categories, isPreview, infoStore, activeTab, setActiveTab
                 </div>
                 <div className="flex items-center space-x-3">
                     <button className="p-2 text-neutral-400"><Search size={20} /></button>
-                    <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
-                        <ShoppingBag size={18} className="text-neutral-600" />
-                    </div>
+                    <Link href={isPreview ? "#" : '/orders'} className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center cursor-pointer" >
+                        <Icons.History size={18} className="text-neutral-600" />
+                    </Link>
                 </div>
             </div>
 
