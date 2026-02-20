@@ -85,14 +85,14 @@ const NewPassword = () => {
 
                 <div className="relative z-10 max-w-md text-center">
                     <div className="flex justify-center mb-8">
-                        <div className="w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center text-[var(--primary-color)]">
+                        <div className="w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center text-[#1A2D5E]">
                             <Lock size={40} />
                         </div>
                     </div>
 
                     <h2 className="text-3xl font-black text-slate-900 leading-tight mb-4">
                         Amankan Kembali <br />
-                        <span className="text-[var(--primary-color)]">Akun Toko Anda</span>
+                        <span className="text-[#1A2D5E]">Akun Toko Anda</span>
                     </h2>
                     <p className="text-slate-500 font-medium mb-12">
                         Buat kata sandi baru yang kuat untuk melindungi data bisnis dan transaksi UMKM Anda.
@@ -138,12 +138,12 @@ const NewPassword = () => {
                                 <div className="space-y-1.5">
                                     <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Kata Sandi Baru</label>
                                     <div className="relative group">
-                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
+                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1A2D5E] transition-colors" size={18} />
                                         <input
                                             type={showPassword ? "text" : "password"}
                                             value={formData.password}
                                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                            className={`w-full bg-slate-50 border-2 ${errors?.password ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-[var(--primary-color)]'} rounded-2xl py-4 pl-12 pr-12 text-sm font-semibold outline-none focus:bg-white transition-all`}
+                                            className={`w-full bg-slate-50 border-2 ${errors?.password ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-[#1A2D5E]'} rounded-2xl py-4 pl-12 pr-12 text-sm font-semibold outline-none focus:bg-white transition-all`}
                                             placeholder="••••••••"
                                         />
                                         <button
@@ -161,12 +161,12 @@ const NewPassword = () => {
                                 <div className="space-y-1.5">
                                     <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Konfirmasi Kata Sandi</label>
                                     <div className="relative group">
-                                        <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
+                                        <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1A2D5E] transition-colors" size={18} />
                                         <input
                                             type={showConfirmPassword ? "text" : "password"}
                                             value={formData.confirmPassword}
                                             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                                            className={`w-full bg-slate-50 border-2 ${errors?.confirmPassword ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-[var(--primary-color)]'} rounded-2xl py-4 pl-12 pr-12 text-sm font-semibold outline-none focus:bg-white transition-all`}
+                                            className={`w-full bg-slate-50 border-2 ${errors?.confirmPassword ? 'border-rose-100 focus:ring-rose-500' : 'border-slate-50 focus:border-[#1A2D5E]'} rounded-2xl py-4 pl-12 pr-12 text-sm font-semibold outline-none focus:bg-white transition-all`}
                                             placeholder="••••••••"
                                         />
                                         <button
@@ -183,7 +183,7 @@ const NewPassword = () => {
                                 <div className="pt-2">
                                     <button
                                         disabled={isSubmitting}
-                                        className="w-full bg-[var(--primary-color)] text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-blue-100 hover:bg-[var(--secondary-color)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                        className="w-full bg-[#1A2D5E] text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-blue-100 hover:bg-[var(--secondary-color)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
                                         {isSubmitting ? (
                                             <>
@@ -208,7 +208,7 @@ const NewPassword = () => {
                                 Kata sandi Anda telah berhasil diubah. Sekarang Anda bisa masuk kembali ke dashboard menggunakan kata sandi yang baru.
                             </p>
 
-                            <Link href="login" className="block w-full bg-[var(--primary-color)] text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-blue-100 hover:bg-[var(--secondary-color)] transition-all text-center">
+                            <Link href="login" className="block w-full bg-[#1A2D5E] text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-blue-100 hover:bg-[var(--secondary-color)] transition-all text-center">
                                 Masuk Sekarang
                             </Link>
                         </div>

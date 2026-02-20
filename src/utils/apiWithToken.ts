@@ -16,6 +16,20 @@ export const getToken = () => {
     }
 };
 
+export const getClient = () => {
+    try {
+        if (typeof window !== "undefined") {
+            const jsonValue = JSON.parse(localStorage.getItem('client') || 'null');
+            return jsonValue ? jsonValue : null;
+        }
+        return null;
+    } catch (e) {
+        console.error("Error parsing token:", e);
+        return null;
+    }
+};
+
+
 // Buat instance axios dengan baseURL
 export const apiClient: AxiosInstance = axios.create({
     baseURL: appConfig?.apiUrl,
@@ -30,8 +44,12 @@ export const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
     (config) => {
         const token = getToken();
+        const client = getClient()
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
+        }
+        if (client && client != 'null') {
+            config.headers['X-Client-Subdomain'] = client?.subdomain;
         }
         return config;
     },

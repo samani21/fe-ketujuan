@@ -11,5 +11,6 @@ export interface OutletType {
     status: string;
     closeTime: string;
     phone: string;
+    is_open?: boolean;
     coords: Coord;
 }

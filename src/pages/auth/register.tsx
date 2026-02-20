@@ -103,7 +103,7 @@ const RegisterPage = () => {
 
                     <h2 className="text-4xl font-black text-black leading-tight mb-6">
                         Kami Bantu Jualan<br />
-                        <span className="text-[var(--primary-color)] text-5xl">dengan Internet</span>
+                        <span className="text-[#1A2D5E] text-5xl">dengan Internet</span>
                     </h2>
 
                     <div className="space-y-6 mb-16">
@@ -113,7 +113,7 @@ const RegisterPage = () => {
                             "Toko langsung aktif dalam 1 menit",
                             "Dukungan Tim 24/7"
                         ].map((text, idx) => (
-                            <div key={idx} className="flex items-center gap-3 text-[var(--primary-color)] font-medium">
+                            <div key={idx} className="flex items-center gap-3 text-[#1A2D5E] font-medium">
                                 <CheckCircle2 size={20} className="text-emerald-500" />
                                 <span>{text}</span>
                             </div>
@@ -121,7 +121,7 @@ const RegisterPage = () => {
                     </div>
 
                     <div className="p-8 bg-blue-800/10 backdrop-blur-sm rounded-[2rem] border border-white/10">
-                        <p className="text-[var(--primary-color)] italic text-sm leading-relaxed">
+                        <p className="text-[#1A2D5E] italic text-sm leading-relaxed">
                             {"Awalnya antrian kedai saya membludak, setelah pakai Katujuan pelanggan saya bisa pesan duluan dan datang setelah pesanan hampir selesai."}
                         </p>
                         <div className="mt-4 flex items-center gap-3">
@@ -159,10 +159,10 @@ const RegisterPage = () => {
                         <div className="space-y-1.5">
                             <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Lengkap</label>
                             <div className="relative group">
-                                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
+                                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1A2D5E] transition-colors" size={18} />
                                 <input
                                     {...register("fullName", { required: "Nama wajib diisi" })}
-                                    className={`w-full bg-slate-50 border-2 ${errors.fullName ? 'border-rose-100' : 'border-slate-50 focus:border-[var(--primary-color)]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
+                                    className={`w-full bg-slate-50 border-2 ${errors.fullName ? 'border-rose-100' : 'border-slate-50 focus:border-[#1A2D5E]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
                                     placeholder="Contoh: Budi Santoso"
                                 />
                             </div>
@@ -173,10 +173,10 @@ const RegisterPage = () => {
                         <div className="space-y-1.5">
                             <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Nomor WhatsApp</label>
                             <div className="relative group">
-                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
+                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1A2D5E] transition-colors" size={18} />
                                 <input
                                     {...register("whatsapp", { required: "Nomor wajib diisi" })}
-                                    className={`w-full bg-slate-50 border-2 ${errors.whatsapp ? 'border-rose-100' : 'border-slate-50 focus:border-[var(--primary-color)]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
+                                    className={`w-full bg-slate-50 border-2 ${errors.whatsapp ? 'border-rose-100' : 'border-slate-50 focus:border-[#1A2D5E]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
                                     placeholder="081234567xxx"
                                 />
                             </div>
@@ -186,11 +186,11 @@ const RegisterPage = () => {
                         <div className="space-y-1.5">
                             <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Alamat Email</label>
                             <div className="relative group">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1A2D5E] transition-colors" size={18} />
                                 <input
                                     {...register("email", { required: "Email wajib diisi" })}
                                     type="email"
-                                    className={`w-full bg-slate-50 border-2 ${errors.email ? 'border-rose-100' : 'border-slate-50 focus:border-[var(--primary-color)]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
+                                    className={`w-full bg-slate-50 border-2 ${errors.email ? 'border-rose-100' : 'border-slate-50 focus:border-[#1A2D5E]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
                                     placeholder="email@toko.com"
                                 />
                             </div>
@@ -200,11 +200,11 @@ const RegisterPage = () => {
                         <div className="space-y-1.5">
                             <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Kata Sandi</label>
                             <div className="relative group">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1A2D5E] transition-colors" size={18} />
                                 <input
                                     {...register("password", { required: "Sandi wajib diisi", minLength: { value: 6, message: "Minimal 6 karakter" } })}
                                     type="password"
-                                    className={`w-full bg-slate-50 border-2 ${errors.password ? 'border-rose-100' : 'border-slate-50 focus:border-[var(--primary-color)]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
+                                    className={`w-full bg-slate-50 border-2 ${errors.password ? 'border-rose-100' : 'border-slate-50 focus:border-[#1A2D5E]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -214,14 +214,14 @@ const RegisterPage = () => {
                         <div className="space-y-1.5">
                             <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Usaha</label>
                             <div className="relative group">
-                                <Store className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
+                                <Store className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1A2D5E] transition-colors" size={18} />
                                 <input
                                     {...register("storeName", { required: "Nama usaha wajib diisi" })}
                                     onChange={(e) => {
                                         register("storeName").onChange(e);
                                         handleSubdomainChange(e);
                                     }}
-                                    className={`w-full bg-slate-50 border-2 ${errors.storeName ? 'border-rose-100' : 'border-slate-50 focus:border-[var(--primary-color)]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
+                                    className={`w-full bg-slate-50 border-2 ${errors.storeName ? 'border-rose-100' : 'border-slate-50 focus:border-[#1A2D5E]'} rounded-2xl py-4 pl-12 pr-4 text-sm font-semibold outline-none focus:bg-white transition-all`}
                                     placeholder="Contoh: Kopi Janji Hati"
                                 />
                             </div>
@@ -233,14 +233,14 @@ const RegisterPage = () => {
                                 URL Toko (Subdomain)
                             </label>
                             <div className="relative group">
-                                <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
+                                <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1A2D5E] transition-colors" size={18} />
                                 <input
                                     value={subdomain}
                                     onChange={handleSubdomainChange}
-                                    className={`w-full bg-slate-50 border-2 rounded-2xl py-4 pl-12 pr-28 text-sm font-bold text-[var(--primary-color)] outline-none transition-all 
+                                    className={`w-full bg-slate-50 border-2 rounded-2xl py-4 pl-12 pr-28 text-sm font-bold text-[#1A2D5E] outline-none transition-all 
                                         ${isAvailable === true ? 'border-emerald-100 focus:border-emerald-500' : ''} 
                                         ${isAvailable === false ? 'border-rose-100 focus:border-rose-500' : ''} 
-                                        ${isAvailable === null ? 'border-slate-50 focus:border-[var(--primary-color)]' : ''}`}
+                                        ${isAvailable === null ? 'border-slate-50 focus:border-[#1A2D5E]' : ''}`}
                                     placeholder="nama-toko"
                                 />
                                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
@@ -269,10 +269,10 @@ const RegisterPage = () => {
                             {/* Preview Card */}
                             <div className={`p-4 rounded-2xl border transition-all ${isAvailable === false ? 'opacity-50 grayscale' : 'bg-blue-50 border-blue-100'}`}>
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm text-[var(--primary-color)]"><Globe size={14} /></div>
+                                    <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm text-[#1A2D5E]"><Globe size={14} /></div>
                                     <div className="overflow-hidden">
                                         <p className="text-[10px] font-bold text-blue-900/40 uppercase tracking-tighter">Preview URL Toko Anda:</p>
-                                        <p className="text-xs font-black text-[var(--primary-color)] truncate">
+                                        <p className="text-xs font-black text-[#1A2D5E] truncate">
                                             https://<span className={`${isAvailable === false ? 'text-rose-500' : 'text-blue-950'} underline decoration-blue-300 decoration-2 underline-offset-2`}>{subdomain || 'toko-anda'}</span>.katujuan.net
                                         </p>
                                     </div>
@@ -284,7 +284,7 @@ const RegisterPage = () => {
                             <button
                                 type="submit"
                                 disabled={isSubmitting || !subdomain}
-                                className="w-full bg-[var(--primary-color)] text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-blue-100 hover:bg-blue-900 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="w-full bg-[#1A2D5E] text-white font-black py-5 rounded-[1.5rem] shadow-xl shadow-blue-100 hover:bg-blue-900 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                             >
                                 {isSubmitting ? <><Loader2 className="animate-spin" size={20} /> Memproses...</> : <>Buat Toko Sekarang <ArrowRight size={20} /></>}
                             </button>
@@ -293,7 +293,7 @@ const RegisterPage = () => {
 
                     <div className="mt-10 pt-10 border-t border-slate-100 text-center">
                         <p className="text-sm font-semibold text-slate-500">
-                            Sudah punya akun? <Link href="/login" className="text-[var(--primary-color)] font-black hover:underline">Masuk di sini</Link>
+                            Sudah punya akun? <Link href="/auth/login" className="text-[#1A2D5E] font-black hover:underline">Masuk di sini</Link>
                         </p>
                     </div>
                 </div>

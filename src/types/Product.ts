@@ -1,5 +1,6 @@
 export interface ProductType {
     id: number;
+    cart_id?: number;
     category: string;
     name: string;
     price: number;
