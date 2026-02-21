@@ -250,7 +250,7 @@ const OrdersPage = () => {
 
             {/* Floating Info (Optional) */}
 
-            {
+            {/* {
                 !isDetail &&
                 <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-xs bg-neutral-900 text-white p-4 rounded-2xl shadow-2xl flex items-center justify-between border border-white/10 backdrop-blur-md">
                     <div className="flex items-center gap-3">
@@ -259,7 +259,7 @@ const OrdersPage = () => {
                     </div>
                     <button className="text-[10px] uppercase text-white hover:underline">Bayar</button>
                 </div>
-            }
+            } */}
         </div>
     );
 };
