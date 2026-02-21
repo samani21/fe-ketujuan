@@ -62,9 +62,9 @@ const ProductsPage = () => {
         },
         {
             header: "Stock",
-            key: "stock_sum_stock",
+            key: "stock",
             render: (row) => (
-                <div>{row?.stock_sum_stock ?? 0}</div>
+                <div>{row?.stock ?? 0}</div>
             )
         },
         {

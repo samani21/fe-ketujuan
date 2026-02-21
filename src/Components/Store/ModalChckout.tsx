@@ -26,12 +26,11 @@ type Props = {
     isCheckoutOpen: boolean;
     setIsCheckoutOpen: (v: boolean) => void;
     cart: ProductType[];
-    cartTotal: number;
     setCart: (v: ProductType[]) => void;
     updateQty: (id: number, qty: number) => void;
 }
 
-const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal, updateQty, setCart }: Props) => {
+const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty, setCart }: Props) => {
     // --- States ---
     const [uploadProgress, setUploadProgress] = useState(0);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -42,11 +41,16 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal
     const [paymentData, setPaymentData] = useState({ code: '', invoice: '' });
     const [cartSnapshot, setCartSnapshot] = useState<ProductType[]>([]);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
+    const [isQty, setIsQty] = useState<boolean>(false);
+    const cartTotal = cartSnapshot.reduce((sum, item) => sum + (item.price * (item.qty ?? 0)), 0);
     // Mengunci tampilan keranjang saat proses checkout dimulai
     useEffect(() => {
         if (isCheckoutOpen && cart.length > 0 && !isSuccess) {
             setCartSnapshot(cart);
+        }
+        if (isQty) {
+            setCartSnapshot(cart);
+            setIsQty(false)
         }
     }, [isCheckoutOpen, cart, isSuccess]);
 
@@ -187,7 +191,7 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal
                                 {/* List Produk */}
                                 <div className="space-y-4 mb-6">
                                     {cartSnapshot.map(item => (
-                                        <CartItem key={item.id} item={item} updateQty={updateQty} isLocked={!!paymentData.code} />
+                                        <CartItem key={item.id} item={item} updateQty={updateQty} isLocked={!!paymentData.code} setIsQty={setIsQty} />
                                     ))}
                                 </div>
 
@@ -319,7 +323,7 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, cartTotal
 };
 
 // --- Sub-Components ---
-const CartItem = ({ item, updateQty, isLocked }: { item: ProductType; updateQty: any; isLocked: boolean }) => {
+const CartItem = ({ item, updateQty, isLocked, setIsQty }: { item: ProductType; updateQty: any; isLocked: boolean, setIsQty: (val: boolean) => void; }) => {
     const isOutOfStock = (item.stock ?? 0) <= 0;
     const isMaxQty = (item.qty ?? 0) >= (item.stock || 0);
 
@@ -332,11 +336,17 @@ const CartItem = ({ item, updateQty, isLocked }: { item: ProductType; updateQty:
             </div>
             {!isLocked ? (
                 <div className="flex items-center space-x-3 bg-neutral-50 border border-neutral-100 rounded-lg px-2 py-1">
-                    <button disabled={isOutOfStock} onClick={() => updateQty(item.id, -1)} className="p-1 disabled:text-neutral-200 text-neutral-400 hover:text-black">
+                    <button disabled={isOutOfStock} onClick={() => {
+                        updateQty(item.id, -1)
+                        setIsQty(true)
+                    }} className="p-1 disabled:text-neutral-200 text-neutral-400 hover:text-black">
                         <Minus size={12} />
                     </button>
                     <span className="font-bold text-xs w-4 text-center">{item.qty}</span>
-                    <button disabled={isOutOfStock || isMaxQty} onClick={() => updateQty(item.id, 1)} className="p-1 disabled:text-neutral-200 text-[var(--primary-color)]">
+                    <button disabled={isOutOfStock || isMaxQty} onClick={() => {
+                        updateQty(item.id, 1)
+                        setIsQty(true)
+                    }} className="p-1 disabled:text-neutral-200 text-[var(--primary-color)]">
                         <Plus size={12} />
                     </button>
                 </div>
