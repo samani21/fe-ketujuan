@@ -107,16 +107,20 @@ const MenuSidebar = [
                 url: '/manage/products/stock'
             },
             {
+                label: "Customers",
+                url: '/manage/customers'
+            },
+            {
+                label: "Orders",
+                url: '/manage/orders'
+            },
+            {
                 label: "Contacts",
                 url: '/manage/contacts'
             },
             {
                 label: "Color",
                 url: '/manage/color'
-            },
-            {
-                label: "Customers",
-                url: '/manage/customers'
             },
             {
                 label: "Info",

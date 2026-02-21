@@ -8,7 +8,8 @@ import {
     XCircle,
     Calendar,
     Filter,
-    ArrowLeft
+    ArrowLeft,
+    Check
 } from 'lucide-react';
 import Link from 'next/link';
 import DetailSuccess from '@/Components/Store/Orders/DetailSuccess';
@@ -34,23 +35,44 @@ const OrdersPage = () => {
             color: 'bg-green-50 text-green-600 border-green-100',
             icon: <CheckCircle2 size={14} />
         },
+        processing: {
+            label: 'Proses',
+            color: 'bg-blue-50 text-blue-600 border-blue-100',
+            icon: <Clock size={14} />
+        },
         failed: {
             label: 'Gagal',
             color: 'bg-red-50 text-red-600 border-red-100',
             icon: <XCircle size={14} />
+        },
+        expired: {
+            label: 'Expired',
+            color: 'bg-gray-50 text-gray-600 border-gray-100',
+            icon: <XCircle size={14} />
+        },
+        finished: {
+            label: 'Selesai',
+            color: 'bg-green-50 text-green-600 border-green-100',
+            icon: <Check size={14} />
         }
     };
     const filteredInvoices = useMemo(() => {
-        // 1. Guard clause untuk menangani data kosong/null
         if (!listOrders) return [];
 
-        // 2. Gunakan strict equality (===) dan bersihkan logika filter
-        if (filter === 'all') {
-            return listOrders;
-        }
+        return listOrders.filter((order) => {
+            // filter status
+            const matchStatus = filter === 'all' || order?.status === filter;
 
-        return listOrders.filter((order) => order?.order_number === filter);
-    }, [listOrders, filter]);
+            // filter search order number
+            const matchSearch =
+                !searchQuery ||
+                order?.order_number
+                    ?.toLowerCase()
+                    .includes(searchQuery.toLowerCase());
+
+            return matchStatus && matchSearch;
+        });
+    }, [listOrders, filter, searchQuery]);
 
     useEffect(() => {
         fetchStore();
@@ -125,18 +147,18 @@ const OrdersPage = () => {
                     !isDetail &&
                     <div className="space-y-4">
                         <div className="relative group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 group-focus-within:text-orange-500 transition-colors" size={18} />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 group-focus-within:text-[var(--primary-color)] transition-colors" size={18} />
                             <input
                                 type="text"
                                 placeholder="Cari nomor invoice..."
-                                className="w-full bg-white border border-neutral-200 rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all shadow-sm"
+                                className="w-full bg-white border border-neutral-200 rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-[var(--primary-color)]/20 focus:border-[var(--primary-color)] outline-none transition-all shadow-sm"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
 
                         <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-                            {['all', 'pending', 'paid', 'failed'].map((s) => (
+                            {['all', 'pending', 'paid', 'failed', 'expired', 'finished'].map((s) => (
                                 <button
                                     key={s}
                                     onClick={() => setFilter(s)}
@@ -155,8 +177,8 @@ const OrdersPage = () => {
                 {/* Invoice List */}
                 {
                     isDetail && isDetail?.status === 'paid' ?
-                        <DetailSuccess invoiceId={isDetail?.order_number} onBack={() => setIsDetail(null)} /> :
-                        isDetail ? <DetailPending invoiceId={isDetail?.order_number} onBack={() => setIsDetail(null)} /> :
+                        <DetailSuccess invoice={isDetail} onBack={() => setIsDetail(null)} /> :
+                        isDetail ? <DetailPending invoice={isDetail} onBack={() => setIsDetail(null)} /> :
                             <div className="space-y-4">
                                 {filteredInvoices && filteredInvoices?.length > 0 ? (
                                     filteredInvoices?.map((inv, index) => (
@@ -192,7 +214,7 @@ const OrdersPage = () => {
                                                     <div className="flex items-center gap-2 text-xs text-neutral-500">
                                                         <span>{inv.items?.length} Produk</span>
                                                         <span className="w-1 h-1 bg-neutral-300 rounded-full" />
-                                                        <span>{inv.payment_method}</span>
+                                                        <span className='uppercase'>{inv.payment_method === 'va_mandiri' ? "Virtual Akun Mandiri" : inv?.payment_method}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -228,7 +250,7 @@ const OrdersPage = () => {
 
             {/* Floating Info (Optional) */}
 
-            {
+            {/* {
                 !isDetail &&
                 <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-xs bg-neutral-900 text-white p-4 rounded-2xl shadow-2xl flex items-center justify-between border border-white/10 backdrop-blur-md">
                     <div className="flex items-center gap-3">
@@ -237,7 +259,7 @@ const OrdersPage = () => {
                     </div>
                     <button className="text-[10px] uppercase text-white hover:underline">Bayar</button>
                 </div>
-            }
+            } */}
         </div>
     );
 };

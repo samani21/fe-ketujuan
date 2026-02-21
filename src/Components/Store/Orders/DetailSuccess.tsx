@@ -11,23 +11,17 @@ import {
     ChevronRight
 } from 'lucide-react';
 import Link from 'next/link';
+import { OrdersType } from '@/types/Client/Orders';
 
-const DetailSuccess = ({ invoiceId = "INV-2023001", onBack }: { invoiceId: string, onBack: () => void; }) => {
-    // Mock data untuk invoice yang sudah dibayar
-    const detail = {
-        id: invoiceId,
-        status: 'success',
-        paidAt: '12 Oktober 2023, 14:45',
-        amount: 125000,
-        method: 'BCA Transfer',
-        items: [
-            { id: 1, name: 'Nasi Goreng Spesial', qty: 2, price: 70000 },
-            { id: 2, name: 'Es Teh Manis', qty: 2, price: 10000 },
-            { id: 3, name: 'Biaya Pengiriman', qty: 1, price: 10000 }
-        ]
+const DetailSuccess = ({ invoice, onBack }: { invoice: OrdersType, onBack: () => void; }) => {
+
+    const formatIDR = (amount: any) => {
+        // Ubah ke number dan bulatkan untuk membuang desimal
+        const value = Math.floor(Number(amount));
+
+        return `Rp ${value.toLocaleString('id-ID')}`;
     };
 
-    const formatIDR = (num: number) => `Rp ${num.toLocaleString('id-ID')}`;
 
     return (
         <div className="min-h-screen bg-white font-sans text-neutral-800 pb-10">
@@ -44,7 +38,7 @@ const DetailSuccess = ({ invoiceId = "INV-2023001", onBack }: { invoiceId: strin
                     <div className="space-y-1">
                         <p className="text-green-600 font-black text-xs uppercase tracking-[0.2em]">Success</p>
                         <h2 className="text-3xl font-black text-neutral-900 tracking-tight">
-                            {formatIDR(detail.amount)}
+                            {formatIDR(invoice?.total_price)}
                         </h2>
                         <p className="text-sm text-neutral-400">Pesanan telah dikonfirmasi</p>
                     </div>
@@ -60,25 +54,37 @@ const DetailSuccess = ({ invoiceId = "INV-2023001", onBack }: { invoiceId: strin
                         <div className="flex justify-between items-start">
                             <div className="space-y-1">
                                 <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Nomor Invoice</p>
-                                <p className="font-black text-neutral-800">#{detail.id}</p>
+                                <p className="font-black text-neutral-800">#{invoice.order_number}</p>
                             </div>
                             <div className="text-right space-y-1">
                                 <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Waktu Bayar</p>
-                                <p className="text-xs font-bold text-neutral-800">{detail.paidAt}</p>
+                                <p className="text-xs font-bold text-neutral-800">{new Intl.DateTimeFormat('id-ID', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false // Ubah ke true jika ingin format AM/PM
+                                }).format(new Date(invoice.created_at)).replace('.', ':')}</p>
                             </div>
                         </div>
 
                         <div className="border-t border-dashed border-neutral-200 pt-6 space-y-4">
-                            {detail.items.map((item) => (
+                            {invoice?.items.map((item) => (
                                 <div key={item.id} className="flex justify-between items-center text-sm">
                                     <p className="text-neutral-500 font-medium">
-                                        <span className="text-neutral-800 font-bold">{item.qty}x</span> {item.name}
+                                        <span className="text-neutral-800 font-bold">{item.quantity}x</span> {item.product?.name}
                                     </p>
-                                    <p className="font-bold text-neutral-800">{formatIDR(item.price)}</p>
+                                    <p className="font-bold text-neutral-800">{formatIDR(item.price_at_purchase * item?.quantity)}</p>
                                 </div>
                             ))}
                         </div>
-
+                        <div className="flex justify-between items-center text-sm">
+                            <p className="text-neutral-500 font-medium">
+                                <span className="text-neutral-800 font-bold">Biaya Pengiriman</span>
+                            </p>
+                            <p className="font-bold text-neutral-800">{formatIDR(invoice?.shipping_cost)}</p>
+                        </div>
                         <div className="border-t border-dashed border-neutral-200 pt-6 flex justify-between items-center">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-neutral-400">
@@ -86,12 +92,12 @@ const DetailSuccess = ({ invoiceId = "INV-2023001", onBack }: { invoiceId: strin
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Metode</p>
-                                    <p className="text-xs font-black text-neutral-800">{detail.method}</p>
+                                    <p className="text-xs font-black text-neutral-800 uppercase">{invoice.payment_method === 'va_mandiri' ? "Viratual Akun Mandiri" : "Transfer " + invoice?.payment_method}</p>
                                 </div>
                             </div>
                             <div className="text-right">
                                 <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Total</p>
-                                <p className="text-lg font-black text-green-600">{formatIDR(detail.amount)}</p>
+                                <p className="text-lg font-black text-green-600">{formatIDR(invoice.total_price)}</p>
                             </div>
                         </div>
                     </div>

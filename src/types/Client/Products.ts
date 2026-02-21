@@ -10,7 +10,7 @@ export interface ProductsType {
     description: string;
     image: string;
     status_stock: boolean;
-    stock_sum_stock: boolean;
+    stock: boolean;
     category: ProductCategorieType
     client: StoreData
 }
