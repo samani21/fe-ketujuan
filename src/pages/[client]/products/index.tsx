@@ -149,7 +149,7 @@ export default function ProductPage() {
 
             {/* --- Mobile Bottom Sheet Checkout --- */}
 
-            <ModalChckoutStore isCheckoutOpen={isCheckoutOpen} setIsCheckoutOpen={setIsCheckoutOpen} cart={cart} cartTotal={cartTotal} setCart={setCart} updateQty={updateQty} />
+            <ModalChckoutStore isCheckoutOpen={isCheckoutOpen} setIsCheckoutOpen={setIsCheckoutOpen} cart={cart} setCart={setCart} updateQty={updateQty} />
             <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
