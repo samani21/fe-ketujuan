@@ -201,7 +201,7 @@ const LayoutAdmin = ({ children, setSearchQuery, searchQuery, setInfoStore }: Pr
                     setInfoStore(res?.data);
                 }
                 setDataStore(res?.data);
-                document.documentElement.style.setProperty('--primary-color', res?.data?.branding?.primary_color);
+                document.documentElement.style.setProperty('--primary-color', res?.data?.branding?.primary_color || '#1A2D5E');
                 // Mengonversi hex ke RGB sederhana untuk transparansi (biasanya pakai library, di sini manual sederhana)
                 const r = parseInt(res?.data?.branding?.primary_color?.slice(1, 3), 16);
                 const g = parseInt(res?.data?.branding?.primary_color?.slice(3, 5), 16);
