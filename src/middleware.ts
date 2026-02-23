@@ -2,52 +2,55 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { appConfig } from './config/appConfig';
 
+// src/middleware.ts
 export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const host = request.headers.get('host') || '';
   const hostname = host.split(':')[0];
 
-  // 1. Abaikan file statis, API, dan rute internal
-  // Menghindari rewrite jika path memiliki ekstensi file (misal: .png, .json)
+  // 1. Ekstrak subdomain dengan memisahkan titik
+  // Ganti logika ekstraksi subdomain yang lama dengan ini:
+  const parts = hostname.split('.');
+  let subdomain = '';
+
+  if (hostname.endsWith('.localhost')) {
+    // Local: kedai-kopi.localhost -> ["kedai-kopi", "localhost"]
+    subdomain = parts[0];
+  } else {
+    // Production: kedai-kopi.katujuan.net -> ["kedai-kopi", "katujuan", "net"]
+    // Kita ambil "kedai-kopi" hanya jika ada subdomain (lebih dari 2 bagian)
+    subdomain = parts.length > 2 ? parts[0] : '';
+  }
+
+  // 2. Abaikan internal & platform utama
   const isInternalPage =
     url.pathname.startsWith('/_next') ||
     url.pathname.startsWith('/api') ||
-    url.pathname.startsWith('/auth') ||
-    url.pathname.startsWith('/register') ||
     url.pathname.includes('.') ||
     url.pathname === '/favicon.ico';
 
-  if (isInternalPage) return NextResponse.next();
-
-  // 2. Ekstrak subdomain secara bersih
-  let subdomain = '';
-  if (hostname.endsWith('.localhost')) {
-    subdomain = hostname.replace('.localhost', '');
-  } else {
-    // Menghapus domain utama untuk mendapatkan subdomain (kedai-kopi.katujuan.net -> kedai-kopi)
-    subdomain = hostname.replace(`.${appConfig.appDomain}`, '');
-  }
-
-  // Jika subdomain adalah 'app', 'www', atau sama dengan hostname (tidak ada subdomain)
-  const isPlatform = subdomain === 'app' || subdomain === 'www' || subdomain === hostname || subdomain === '';
-
-  if (isPlatform) {
+  if (isInternalPage || subdomain === 'app' || subdomain === 'www' || subdomain === '') {
     return NextResponse.next();
   }
 
-  // 3. REWRITE internal ke folder pages/[client]
-  // Hilangkan trailing slash dari pathname jika itu adalah root "/"
+  // 3. REWRITE ke /[subdomain][pathname]
+  // Pastikan tidak ada double slash jika pathname adalah "/"
   const cleanPathname = url.pathname === '/' ? '' : url.pathname;
-
-  // Hasil akhirnya: /kedai-kopi (jika akses root) atau /kedai-kopi/login
   url.pathname = `/${subdomain}${cleanPathname}`;
 
-  console.log("SUBDOMAIN TERDETEKSI:", `"${subdomain}"`);
-  console.log("PATH TUJUAN REWRITE:", url.pathname);
-
+  console.log("REWRITE SUCCESS TO:", url.pathname);
   return NextResponse.rewrite(url);
 }
 
 export const config = {
-  matcher: ['/((?!api|_next|_static|_vercel|[\\w-]+\\.\\w+).*)'],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
 };
