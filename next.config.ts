@@ -1,9 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactCompiler: true,
   reactStrictMode: true,
+  // Hapus semua experimental dan devIndicators jika tipenya tidak cocok
 };
 
 export default nextConfig;

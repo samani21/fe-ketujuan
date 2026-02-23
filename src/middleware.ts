@@ -4,6 +4,9 @@ import { appConfig } from './config/appConfig';
 
 // src/middleware.ts
 export function middleware(request: NextRequest) {
+  console.log("--- MIDDLEWARE EXECUTED ---");
+  console.log("FULL URL:", request.url);
+  console.log("HOSTNAME:", request.headers.get('host'));
   const url = request.nextUrl.clone();
   const host = request.headers.get('host') || '';
   const hostname = host.split(':')[0];
@@ -45,11 +48,8 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
+     * Jalankan middleware pada semua rute kecuali:
+     * api, _next/static, _next/image, favicon.ico
      */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
