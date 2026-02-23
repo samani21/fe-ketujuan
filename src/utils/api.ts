@@ -20,25 +20,20 @@ api.interceptors.request.use((config) => {
       .replace('www.', '')
       .replace(/^\.|\.$/g, '');
 
+    if ((subdomain === 'app' || subdomain === 'app.katujuan.net') && !token) {
+      if (!window.location.pathname.startsWith('/auth')) {
+        window.location.href = '/auth/login';
+      }
+      return Promise.reject(new axios.Cancel('No token'));
+    }
     // default platform
     if (!subdomain || subdomain === 'localhost') {
       subdomain = 'app';
     }
 
+
     config.headers['X-Client-Subdomain'] = subdomain;
 
-    // 🔐 Redirect jika app tapi belum login
-    if (subdomain === 'app' && !token) {
-      if (!window.location.pathname.startsWith('/auth')) {
-        window.location.href = '/auth/register';
-      }
-      return Promise.reject(new axios.Cancel('No token'));
-    }
-
-    // pasang token jika ada
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
   }
 
   return config;
