@@ -3,48 +3,37 @@ import type { NextRequest } from 'next/server';
 import { appConfig } from './config/appConfig';
 
 // src/middleware.ts
+// src/middleware.ts
 export function middleware(request: NextRequest) {
-  console.log("--- MIDDLEWARE EXECUTED ---");
-  console.log("FULL URL:", request.url);
-  console.log("HOSTNAME:", request.headers.get('host'));
   const url = request.nextUrl.clone();
-  const host = request.headers.get('host') || '';
-  const hostname = host.split(':')[0];
+  const hostname = request.headers.get('host') || '';
 
-  // 1. Ekstrak subdomain dengan memisahkan titik
-  // Ganti logika ekstraksi subdomain yang lama dengan ini:
   const parts = hostname.split('.');
   let subdomain = '';
 
-  if (hostname.endsWith('.localhost')) {
-    // Local: kedai-kopi.localhost -> ["kedai-kopi", "localhost"]
+  // Logika subdomain Anda sudah benar
+  if (hostname.endsWith('.localhost') || hostname.includes('localhost')) {
     subdomain = parts[0];
   } else {
-    // Production: kedai-kopi.katujuan.net -> ["kedai-kopi", "katujuan", "net"]
-    // Kita ambil "kedai-kopi" hanya jika ada subdomain (lebih dari 2 bagian)
     subdomain = parts.length > 2 ? parts[0] : '';
   }
 
-  // 2. Abaikan internal & platform utama
-  const isInternalPage =
-    url.pathname.startsWith('/_next') ||
-    url.pathname.startsWith('/api') ||
-    url.pathname.includes('.') ||
-    url.pathname === '/favicon.ico';
+  // PERBAIKAN: Jangan pakai .includes('.') secara umum
+  const isPublicFile = /\.(.*)$/.test(url.pathname); // Cek apakah ada ekstensi file (misal .png, .jpg)
+  const isNextInternal = url.pathname.startsWith('/_next');
 
-  if (isInternalPage || subdomain === 'app' || subdomain === 'www' || subdomain === '') {
+  if (isPublicFile || isNextInternal || subdomain === 'app' || subdomain === 'www' || subdomain === '') {
     return NextResponse.next();
   }
 
-  // 3. REWRITE ke /[subdomain][pathname]
-  // Pastikan tidak ada double slash jika pathname adalah "/"
   const cleanPathname = url.pathname === '/' ? '' : url.pathname;
+
+  // Gunakan cara ini agar rewrite terbaca sebagai rute internal
   url.pathname = `/${subdomain}${cleanPathname}`;
 
-  console.log("REWRITE SUCCESS TO:", url.pathname);
+  console.log("REWRITING TO:", url.pathname);
   return NextResponse.rewrite(url);
 }
-
 export const config = {
   matcher: [
     /*
