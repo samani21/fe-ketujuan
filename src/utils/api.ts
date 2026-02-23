@@ -10,30 +10,38 @@ const api = axios.create({
   },
 });
 
+const getSubdomain = () => {
+  if (typeof window === 'undefined') return 'app';
+
+  const host = window.location.hostname;
+  const parts = host.split('.');
+
+  // localhost
+  if (host.includes('localhost')) {
+    if (parts.length === 1) return 'app';
+    return parts[0];
+  }
+
+  // production
+  if (parts.length <= 2) return 'app';
+
+  return parts[0];
+};
+
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
-    const host = window.location.hostname;
+    const subdomain = getSubdomain();
     const token = getToken();
 
-    let subdomain = host
-      .replace(appConfig.appDomain, '')
-      .replace('www.', '')
-      .replace(/^\.|\.$/g, '');
-
-    if ((subdomain === 'app' || subdomain === 'app.katujuan.net') && !token) {
+    // redirect jika platform app tapi belum login
+    if (subdomain === 'app' && !token) {
       if (!window.location.pathname.startsWith('/auth')) {
         window.location.href = '/auth/login';
+        return Promise.reject(new axios.Cancel('No token'));
       }
-      return Promise.reject(new axios.Cancel('No token'));
     }
-    // default platform
-    if (!subdomain || subdomain === 'localhost') {
-      subdomain = 'app';
-    }
-
 
     config.headers['X-Client-Subdomain'] = subdomain;
-
   }
 
   return config;
