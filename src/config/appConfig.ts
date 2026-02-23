@@ -1,8 +1,8 @@
 export const appConfig = {
-  apiUrl: "https://api.katujuan.net",
-  // apiUrl: "https://api.katujuan.net", //production
-  appDomain: "localhost", //local
-  //   appDomain: "katujuan.net", //production
+  // apiUrl: "http://be-ketujuan.test",
+  apiUrl: "https://api.katujuan.net", //production
+  // appDomain: "localhost", //local
+  appDomain: "katujuan.net", //production
   isProduction: 'production',
 
   // --- HELPER UNTUK REDIRECT KE SUBDOMAIN ---
