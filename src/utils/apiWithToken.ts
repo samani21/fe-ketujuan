@@ -74,7 +74,7 @@ export async function Get<T>(path: string): Promise<T> {
             localStorage.removeItem("user");
             localStorage.removeItem("client");
 
-            window.location.href = 'http://app.katujuan.net/';
+            window.location.href = 'https://app.katujuan.net/';
         }
         // Kembalikan langsung error Axios tanpa mengubah jadi Error runtime
         return Promise.reject({

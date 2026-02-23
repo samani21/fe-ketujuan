@@ -44,7 +44,7 @@ const LoginPage = () => {
             localStorage.setItem("client", JSON.stringify(response?.client));
             if (response?.user?.role === 'customer') {
                 const redirectUrl =
-                    `http://${response?.client?.subdomain}.app.katujuan.net` +
+                    `https://${response?.client?.subdomain}.katujuan.net` +
                     `?token=${response?.token}` +
                     `&user=${encodeURIComponent(JSON.stringify(response?.user))}` +
                     `&client=${encodeURIComponent(JSON.stringify(response?.client))}`;

@@ -113,7 +113,7 @@ const LayoutStore = ({ children, setSearchQuery, searchQuery, subdomain, setInfo
                 localStorage.removeItem("user");
                 localStorage.removeItem("client");
 
-                window.location.href = 'http://app.katujuan.net/';
+                window.location.href = 'https://app.katujuan.net/';
             }
 
         } catch (err: any) {
