@@ -239,7 +239,7 @@ const LayoutAdmin = ({ children, setSearchQuery, searchQuery, setInfoStore }: Pr
                         <TrendingUp size={18} className="text-white" />
                     </div>
                     <h1 className="text-xl font-bold tracking-tight text-[var(--primary-color)]">
-                        BRAND<span className="font-light text-neutral-400">ADMIN</span>
+                        {dataStore?.name}
                     </h1>
                 </div>
 

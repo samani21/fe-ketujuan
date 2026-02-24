@@ -81,7 +81,7 @@ const CreateOrUpdateCustomers = ({ modalType, closeModal, handleSubmit, data, st
         <Modal
             isOpen={modalType === "add" || modalType === 'edit'}
             onClose={closeModal}
-            title={modalType === "add" ? "Add Stock Product" : "Edit Stock Product"}
+            title={modalType === "add" ? "Add Customer" : "Edit Customer"}
         >
             <div className="overflow-auto max-h-[80vh] no-scrollbar ">
                 <form onSubmit={onSubmit} className="space-y-5">

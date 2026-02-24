@@ -89,7 +89,7 @@ const CreateOrUpdateOutlets = ({ modalType, closeModal, handleSubmit, data }: Pr
         <Modal
             isOpen={modalType === "add" || modalType === 'edit'}
             onClose={closeModal}
-            title="Demo Semua Tipe Input"
+            title={modalType === "add" ? "Add Outlet" : "Edit Outlet"}
         >
             <div className="overflow-auto max-h-[80vh] no-scrollbar ">
                 <form onSubmit={onSubmit} className="space-y-5">
