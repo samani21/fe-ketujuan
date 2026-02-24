@@ -15,13 +15,20 @@ import {
     CheckCheck
 } from 'lucide-react';
 import { OrdersType } from '@/types/Client/Orders';
+import { Post } from '@/utils/apiWithToken';
+import Notification from '@/Components/Component/Notification';
 
-const DetailPending = ({ invoice, onBack }: { invoice: OrdersType, onBack: () => void; }) => {
+const DetailPending = ({ invoice, onBack, fetchOrders }: { invoice: OrdersType, onBack: () => void; fetchOrders: () => void; }) => {
     const fileInputRef = useRef<any>(null);
     const [selectedFile, setSelectedFile] = useState<any>(null);
     const [isUploading, setIsUploading] = useState(false);
-
-
+    const [imageProof, setImageProof] = useState<string>('')
+    const [showNotif, setShowNotif] = useState<any>({
+        message: '',
+        type: '',
+        isOpen: false,
+    });
+    console.log('selectedFile', selectedFile)
     const statusTheme: any = {
         pending: { label: 'Menunggu Diverifikasi', color: 'text-orange-500', bg: 'bg-orange-50', icon: <Clock size={20} /> },
         processing: { label: 'Pesanan Sedang diproses', color: 'text-blue-500', bg: 'bg-blue-50', icon: <Clock size={20} /> },
@@ -61,15 +68,28 @@ const DetailPending = ({ invoice, onBack }: { invoice: OrdersType, onBack: () =>
 
         // Simulasi proses upload ke API
         try {
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            // console.log("File diunggah:", selectedFile?.name);
-            // Di sini Anda biasanya akan memanggil Post API dengan FormData
-            // Setelah berhasil, Anda mungkin ingin me-refresh status invoice
+            const formData = new FormData();
+            if (selectedFile) {
+                formData.append('payment_proof', selectedFile);
+            }
+            formData.append('status', 'pending');
+
+            const res = await Post<any, FormData>(`/v1/orders/${invoice?.id}`, formData)
+            if (res?.status === 'success') {
+                fetchOrders()
+                setShowNotif({
+                    message: "Upload bukti pembayaran berhasil",
+                    type: 'success',
+                    isOpen: true
+                })
+                setImageProof(res?.data?.payment_proof_url)
+            }
         } finally {
             setIsUploading(false);
             setSelectedFile(null);
         }
     };
+
 
     return (
         <div className="min-h-screen bg-[#F8F9FA] pb-32 font-sans text-neutral-800">
@@ -144,7 +164,7 @@ const DetailPending = ({ invoice, onBack }: { invoice: OrdersType, onBack: () =>
                             <span className="text-[var(--primary-color)]">{formatIDR(invoice?.total_price)}</span>
                         </div>
                     </div>
-                    <img src={invoice?.payment_proof_url} className='rounded-md' />
+                    <img src={imageProof || invoice?.payment_proof_url} className='rounded-md' />
                 </section>
 
                 {/* Bantuan */}
@@ -159,7 +179,7 @@ const DetailPending = ({ invoice, onBack }: { invoice: OrdersType, onBack: () =>
                 </div>
             </main>
             {/* Floating Action (If Pending) */}
-            {/* {invoice.status === 'pending' && (
+            {invoice.status === 'pending' && invoice?.payment_method != 'va_mandiri' && (
                 <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/80 backdrop-blur-lg border-t border-neutral-100 max-w-md mx-auto z-20">
                     <input
                         type="file"
@@ -209,7 +229,11 @@ const DetailPending = ({ invoice, onBack }: { invoice: OrdersType, onBack: () =>
                         </button>
                     </div>
                 </div>
-            )} */}
+            )}
+            {
+                showNotif?.isOpen &&
+                <Notification onClose={() => setShowNotif(false)} message={showNotif?.message} type={showNotif?.type} />
+            }
         </div>
     );
 };

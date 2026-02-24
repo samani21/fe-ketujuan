@@ -178,7 +178,7 @@ const OrdersPage = () => {
                 {
                     isDetail && isDetail?.status === 'paid' ?
                         <DetailSuccess invoice={isDetail} onBack={() => setIsDetail(null)} /> :
-                        isDetail ? <DetailPending invoice={isDetail} onBack={() => setIsDetail(null)} /> :
+                        isDetail ? <DetailPending invoice={isDetail} onBack={() => setIsDetail(null)} fetchOrders={fetchOrders} /> :
                             <div className="space-y-4">
                                 {filteredInvoices && filteredInvoices?.length > 0 ? (
                                     filteredInvoices?.map((inv, index) => (

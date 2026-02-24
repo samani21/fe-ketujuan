@@ -27,10 +27,12 @@ type Props = {
     setIsCheckoutOpen: (v: boolean) => void;
     cart: ProductType[];
     setCart: (v: ProductType[]) => void;
-    updateQty: (id: number, qty: number) => void;
+    updateQty: (id: number, delta: number, soldOut?: boolean) => void;
+    fetchProducts: () => void;
+
 }
 
-const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty, setCart }: Props) => {
+const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty, setCart, fetchProducts }: Props) => {
     // --- States ---
     const [uploadProgress, setUploadProgress] = useState(0);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -38,13 +40,24 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
     const [isLoading, setIsLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState<"transfer" | "va">("transfer");
     const [selectedBankCode, setSelectedBankCode] = useState<BanksType | null>(null);
-    const [paymentData, setPaymentData] = useState({ code: '', invoice: '' });
+    const [paymentData, setPaymentData] = useState({ id: '', code: '', invoice: '' });
     const [cartSnapshot, setCartSnapshot] = useState<ProductType[]>([]);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isQty, setIsQty] = useState<boolean>(false);
-    const cartTotal = cartSnapshot.reduce((sum, item) => sum + (item.price * (item.qty ?? 0)), 0);
-    // Mengunci tampilan keranjang saat proses checkout dimulai
+    const [failedCheckout, setFailedCehckout] = useState<string>('')
+    const [isHandleCheckout, setHandleCheckout] = useState<boolean>(false);
+    const cartTotal = cartSnapshot.reduce((sum, item) => {
+        if ((item.stock ?? 0) <= 0) return sum;
+        return sum + (item.price * (item.qty ?? 0));
+    }, 0);
     useEffect(() => {
+        if (isSuccess) {
+            fetchProducts()
+        }
+        fetchProducts()
+    }, [isHandleCheckout])
+    useEffect(() => {
+
         if (isCheckoutOpen && cart.length > 0 && !isSuccess) {
             setCartSnapshot(cart);
         }
@@ -71,8 +84,9 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
             setSelectedFile(null);
             setPaymentMethod("transfer");
             setSelectedBankCode(null);
-            setPaymentData({ code: '', invoice: '' });
+            setPaymentData({ id: '', code: '', invoice: '' });
             setCartSnapshot([]);
+            setFailedCehckout('')
         }, 300);
     };
 
@@ -94,24 +108,29 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
         }
     };
 
-    const handleCheckout = async (methodType: string) => {
+    const handleCheckout = async (methodType: string, accountNumber?: string) => {
         setIsLoading(true);
+
         try {
             const formData = new FormData();
+
             formData.append('subtotal', String(cartTotal));
             formData.append('shipping_cost', String(SHIPPING_COST));
             formData.append('total_price', String(cartTotal + SHIPPING_COST));
             formData.append('payment_method', methodType);
-            if (methodType != 'va_mandiri') {
-                formData.append('payment_destination', String(selectedBank?.accountNumber));
 
+            if (methodType !== 'va_mandiri') {
+                formData.append('payment_destination', String(accountNumber));
             }
+
             if (selectedFile) {
                 formData.append('payment_proof', selectedFile);
             }
+
             cart.forEach((item, index) => {
                 formData.append(`cart[${index}][product_id]`, String(item.id));
                 formData.append(`cart[${index}][price]`, String(item.price));
+                formData.append(`cart[${index}][name]`, String(item.name));
                 formData.append(`cart[${index}][quantity]`, String(item.qty));
             });
 
@@ -119,17 +138,37 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
 
             if (res?.success) {
                 setPaymentData({
+                    id: res?.data?.order_id,
                     invoice: res?.data?.order_number || 'INV-' + Date.now(),
                     code: res?.data?.payment_code || res?.data?.payment_destination || '88301234567890'
                 });
+                // setIsSuccess(true);
+                setHandleCheckout(true);
+                setCart([]);
+            } else {
+                const failedProducts = res.data || [];
+                setFailedCehckout(res?.message)
+                setHandleCheckout(true);
+                setCartSnapshot((prev) => {
+                    const failedIds = failedProducts.map((p: any) => Number(p.product_id));
 
-                if (methodType != 'va_mandiri') {
-                    setIsSuccess(true);
-                }
-                setCart([]); // Kosongkan keranjang di store utama
+                    const next = prev.map((item) =>
+                        failedIds.includes(item.id)
+                            ? { ...item, stock: 0 }
+                            : item
+                    );
+
+                    const activeItems = next.filter((i) => (i.stock ?? 0) > 0);
+
+                    return next;
+                });
+
             }
-        } catch (error) {
+
+        } catch (error: any) {
+
             console.error("Checkout error:", error);
+
         } finally {
             setIsLoading(false);
         }
@@ -140,6 +179,37 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
         try {
             const res = await Get<{ success: boolean }>(`/v1/front/orders/status/${paymentData?.invoice}`)
             if (res?.success) {
+                setTimeout(() => {
+                    setIsLoading(false);
+                    setIsSuccess(true);
+                }, 1500);
+            } else {
+                setTimeout(() => {
+                    setIsLoading(false);
+                    setIsFailed(true)
+                    setIsSuccess(false);
+                }, 1500);
+            }
+        } catch (e) {
+            setTimeout(() => {
+                setIsFailed(true)
+                setIsLoading(false);
+                setIsSuccess(false);
+            }, 1500);
+        }
+    };
+
+    const sendPaymentProof = async () => {
+        setIsLoading(true);
+        try {
+            const formData = new FormData();
+            if (selectedFile) {
+                formData.append('payment_proof', selectedFile);
+            }
+            formData.append('status', 'pending');
+
+            const res = await Post<any, FormData>(`/v1/orders/${paymentData?.id}`, formData)
+            if (res?.status === 'success') {
                 setTimeout(() => {
                     setIsLoading(false);
                     setIsSuccess(true);
@@ -225,10 +295,13 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
                                     {paymentMethod === "transfer" && (
                                         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
                                             <div className="grid grid-cols-3 gap-3">
-                                                {BANKS.map((bank) => (
+                                                {!selectedBank && BANKS.map((bank) => (
                                                     <button
                                                         key={bank.code}
-                                                        onClick={() => setSelectedBankCode(bank)}
+                                                        onClick={() => {
+                                                            handleCheckout(bank?.code, bank?.accountNumber)
+                                                            setSelectedBankCode(bank)
+                                                        }}
                                                         className={`p-3 rounded-xl border text-xs font-bold transition ${selectedBankCode?.code === bank.code ? "border-[var(--primary-color)] bg-[var(--primary-color)]/5 text-[var(--primary-color)]" : "border-neutral-100 text-neutral-400"}`}
                                                     >
                                                         {bank.name}
@@ -255,7 +328,7 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
                                                     />
                                                     <button
                                                         disabled={uploadProgress < 100 || isLoading}
-                                                        onClick={() => handleCheckout(selectedBankCode?.code)}
+                                                        onClick={() => sendPaymentProof()}
                                                         className={`w-full py-4 rounded-xl font-black text-sm transition-all ${uploadProgress === 100 ? 'bg-[var(--primary-color)] text-white shadow-lg shadow-orange-200' : 'bg-neutral-100 text-neutral-300 cursor-not-allowed'}`}
                                                     >
                                                         {isLoading ? 'MEMPROSES...' : 'KONFIRMASI PEMBAYARAN'}
@@ -264,7 +337,12 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
                                             )}
                                         </div>
                                     )}
-
+                                    {failedCheckout != '' &&
+                                        <div className='flex items-center text-red-500 text-[12px] gap-2'>
+                                            <AlertTriangle />
+                                            <p className=''>{failedCheckout}</p>
+                                        </div>
+                                    }
                                     {paymentMethod === "va" && (
                                         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
                                             <div className="p-5 bg-neutral-50 rounded-2xl border border-neutral-100">
@@ -323,30 +401,80 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
 };
 
 // --- Sub-Components ---
-const CartItem = ({ item, updateQty, isLocked, setIsQty }: { item: ProductType; updateQty: any; isLocked: boolean, setIsQty: (val: boolean) => void; }) => {
-    const isOutOfStock = (item.stock ?? 0) <= 0;
-    const isMaxQty = (item.qty ?? 0) >= (item.stock || 0);
+const CartItem = ({
+    item,
+    updateQty,
+    isLocked,
+    setIsQty
+}: {
+    item: ProductType;
+    updateQty: (id: number, delta: number, soldOut?: boolean) => void;
+    isLocked: boolean;
+    setIsQty: (val: boolean) => void;
+}) => {
+    const stock = item.stock ?? 0;
+    const isOutOfStock = stock <= 0;
+    const isMaxQty = (item.qty ?? 0) >= stock;
 
     return (
-        <div className="flex items-center space-x-3 opacity-90">
-            <img src={item.image} className="w-14 h-14 rounded-xl object-cover bg-neutral-100" alt={item.name} />
+        <div className={`flex items-center space-x-3 ${isOutOfStock ? "opacity-60" : "opacity-90"}`}>
+            <div className="relative">
+                <img
+                    src={item.image}
+                    className="w-14 h-14 rounded-xl object-cover bg-neutral-100"
+                    alt={item.name}
+                />
+
+                {isOutOfStock && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl">
+                        <span className="text-[10px] font-bold text-white">HABIS</span>
+                    </div>
+                )}
+            </div>
+
             <div className="flex-1 min-w-0">
                 <h4 className="font-bold text-sm truncate">{item.name}</h4>
                 <p className="text-xs text-neutral-400">{formatIDR(item.price)}</p>
+
+                {isOutOfStock && (
+                    <p className="text-[11px] text-red-500 font-semibold">
+                        Stok habis • Hapus item
+                    </p>
+                )}
             </div>
-            {!isLocked ? (
+
+            {isOutOfStock ? (
+                <button
+                    onClick={() => {
+                        updateQty(item.id, -(item.qty ?? 0), true);
+                        setIsQty(true);
+                    }}
+                    className="text-xs bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600"
+                >
+                    Hapus
+                </button>
+            ) : !isLocked ? (
                 <div className="flex items-center space-x-3 bg-neutral-50 border border-neutral-100 rounded-lg px-2 py-1">
-                    <button disabled={isOutOfStock} onClick={() => {
-                        updateQty(item.id, -1)
-                        setIsQty(true)
-                    }} className="p-1 disabled:text-neutral-200 text-neutral-400 hover:text-black">
+                    <button
+                        onClick={() => {
+                            updateQty(item.id, -1);
+                            setIsQty(true);
+                        }}
+                        className="p-1 text-neutral-400 hover:text-black"
+                    >
                         <Minus size={12} />
                     </button>
+
                     <span className="font-bold text-xs w-4 text-center">{item.qty}</span>
-                    <button disabled={isOutOfStock || isMaxQty} onClick={() => {
-                        updateQty(item.id, 1)
-                        setIsQty(true)
-                    }} className="p-1 disabled:text-neutral-200 text-[var(--primary-color)]">
+
+                    <button
+                        disabled={isMaxQty}
+                        onClick={() => {
+                            updateQty(item.id, 1);
+                            setIsQty(true);
+                        }}
+                        className="p-1 disabled:text-neutral-200 text-[var(--primary-color)]"
+                    >
                         <Plus size={12} />
                     </button>
                 </div>
@@ -358,7 +486,6 @@ const CartItem = ({ item, updateQty, isLocked, setIsQty }: { item: ProductType; 
         </div>
     );
 };
-
 const SuccessState = ({ invoice, onClose }: { invoice: string, onClose: () => void }) => (
     <div className="py-10 flex flex-col items-center text-center animate-in zoom-in-95 duration-300">
         <motion.div

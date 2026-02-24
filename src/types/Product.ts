@@ -8,5 +8,6 @@ export interface ProductType {
     image: string;
     qty?: number
     stock?: number
-    status_stock?: boolean
+    status_stock?: boolean,
+    soldout?: boolean,
 }
