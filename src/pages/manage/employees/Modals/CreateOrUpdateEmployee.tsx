@@ -16,12 +16,7 @@ type Props = {
     storeInfo: StoreData | null;
 };
 
-type Option = {
-    label: string;
-    value: string;
-}
-
-const CreateOrUpdateCustomers = ({ modalType, closeModal, handleSubmit, data, storeInfo }: Props) => {
+const CreateOrUpdateEmployee = ({ modalType, closeModal, handleSubmit, data, storeInfo }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [form, setForm] = useState<any>({
         password: "",
@@ -106,4 +101,4 @@ const CreateOrUpdateCustomers = ({ modalType, closeModal, handleSubmit, data, st
     );
 };
 
-export default CreateOrUpdateCustomers;
+export default CreateOrUpdateEmployee;

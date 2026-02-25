@@ -111,6 +111,10 @@ const MenuSidebar = [
                 url: '/manage/customers'
             },
             {
+                label: "Employees",
+                url: '/manage/employees'
+            },
+            {
                 label: "Orders",
                 url: '/manage/orders'
             },
