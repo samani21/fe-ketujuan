@@ -2,11 +2,13 @@ import FormField from '@/Components/Component/CRUD/FormField';
 import LayoutAdmin from '@/Components/Layout/LayoutAdmin';
 import { StoreData } from '@/services/storeService';
 import api from '@/utils/api';
-import { Post } from '@/utils/apiWithToken';
+import { Get, Post } from '@/utils/apiWithToken';
 import { CheckCircle2, Database, Globe, Info, LayoutDashboard, Loader2, Mail, Phone, Save } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
-import SubdomainUpdateModal from './Modal/SubdomainUpdateModal';
+import SubdomainUpdateModal from './Components/SubdomainUpdateModal';
 import Notification from '@/Components/Component/Notification';
+import Operational from './Components/Operational';
+import { OperationalType } from '@/types/Client/Operational';
 type Props = {}
 
 const InfoPage = () => {
@@ -22,6 +24,7 @@ const InfoPage = () => {
     const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
     const [isChecking, setIsChecking] = useState<boolean>(false);
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+    const [dateOperational, sedDataOperational] = useState<OperationalType[]>([])
     const [showNotif, setShowNotif] = useState<any>({
         message: '',
         type: '',
@@ -37,6 +40,7 @@ const InfoPage = () => {
             address: infoStore?.address,
             logo: infoStore?.logo,
         })
+        getOperational()
         setSubdomain(infoStore?.subdomain ?? '');
     }, [infoStore])
     useEffect(() => {
@@ -62,7 +66,16 @@ const InfoPage = () => {
     const update = (name: string, value: any) => {
         setForm((prev: any) => ({ ...prev, [name]: value }));
     };
+    const getOperational = async () => {
+        try {
+            const res = await Get<{ status: string, data: any }>(`/v1/business-hour`);
+            if (res?.status === 'success') {
+                sedDataOperational(res?.data)
+            }
+        } catch (e) {
 
+        }
+    }
     const onSubmit = async (e: any) => {
         e.preventDefault();
         setIsLoading(true)
@@ -135,6 +148,16 @@ const InfoPage = () => {
     return (
         <LayoutAdmin setInfoStore={setInfoStore}>
             <form onSubmit={onSubmit} className="space-y-6 text-slate-800">
+                <div className="flex justify-end gap-4 pt-4">
+
+                    <button
+                        type="submit"
+                        className="px-8 py-3 bg-indigo-900 text-white rounded-2xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-950 transition-all flex items-center gap-2"
+                    >
+                        <Save size={20} />
+                        Simpan Perubahan
+                    </button>
+                </div>
 
                 {/* Informasi Utama */}
                 <section className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
@@ -265,24 +288,11 @@ const InfoPage = () => {
                 </section>
 
                 {/* Action Buttons */}
-                <div className="flex justify-end gap-4 pt-4">
-                    <button
-                        type="button"
-                        className="px-8 py-3 bg-white border border-slate-200 rounded-2xl text-slate-500 font-bold hover:bg-slate-50 transition-all"
-                    >
-                        Batal
-                    </button>
-                    <button
-                        type="submit"
-                        className="px-8 py-3 bg-indigo-900 text-white rounded-2xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-950 transition-all flex items-center gap-2"
-                    >
-                        <Save size={20} />
-                        Simpan Perubahan
-                    </button>
-                </div>
 
             </form>
-
+            <section className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+                <Operational dataOperational={dateOperational} getOperational={getOperational} />
+            </section>
             {
                 isOpenModal &&
                 <SubdomainUpdateModal isOpen={isOpenModal} setIsOpen={setIsOpenModal} />

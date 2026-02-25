@@ -49,7 +49,7 @@ export default function DynamicTable<T>({
         return (
             <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
                 <p className="text-xs text-slate-500">
-                    Menampilkan {data.length} dari total {countData} data
+                    Menampilkan {data?.length ?? 0} dari total {countData} data
                 </p>
 
                 <div className="flex gap-2 items-center">
