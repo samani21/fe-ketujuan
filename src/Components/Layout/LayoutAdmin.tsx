@@ -12,7 +12,8 @@ import {
     ChevronUp,
     ChevronDown,
     Settings,
-    Layers2
+    Layers2,
+    PieChart
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -115,10 +116,6 @@ const MenuSidebar = [
                 url: '/manage/employees'
             },
             {
-                label: "Orders",
-                url: '/manage/orders'
-            },
-            {
                 label: "Contacts",
                 url: '/manage/contacts'
             },
@@ -134,8 +131,19 @@ const MenuSidebar = [
     },
     {
         label: "Report",
-        icon: <Users size={20} />,
+        icon: <PieChart size={20} />,
         url: '/report',
+        child: [
+            {
+                label: "Orders",
+                url: '/report/orders'
+            },
+            {
+                label: "Payments",
+                url: '/report/payments'
+            },
+
+        ]
     },
 ]
 
