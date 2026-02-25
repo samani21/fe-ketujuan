@@ -12,4 +12,5 @@ export interface ClientOrderType {
     transaction_id: string;
     provider: string;
     provider_response: string;
+    order_number?: string;
 }

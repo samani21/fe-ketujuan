@@ -70,6 +70,14 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
     const selectedBank = useMemo(() =>
         BANKS.find(b => b.code === selectedBankCode?.code), [selectedBankCode]
     );
+    const handleCopy = (text: string) => {
+        const el = document.createElement('textarea');
+        el.value = text;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+    };
 
     // --- Reset Logic ---
     const handleClose = () => {
@@ -316,7 +324,7 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
                                                         <p className="text-[10px] text-neutral-500 uppercase font-bold tracking-tight">{selectedBank.name} a/n {selectedBank.accountName}</p>
                                                         <p className="font-black text-[var(--primary-color)] text-sm tracking-widest">{selectedBank.accountNumber}</p>
                                                     </div>
-                                                    <button className="text-neutral-400 hover:text-[var(--primary-color)]"><Copy size={16} /></button>
+                                                    <button className="text-neutral-400 hover:text-[var(--primary-color)]" onClick={() => handleCopy(selectedBank?.accountNumber)}><Copy size={16} /></button>
                                                 </div>
                                             )}
 
@@ -352,7 +360,7 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
                                                         <p className="text-xs text-neutral-500 mb-2">Nomor Virtual Account</p>
                                                         <div className="flex items-center justify-center space-x-2">
                                                             <span className="font-black text-[var(--primary-color)] text-xl tracking-[0.2em]">{paymentData.code}</span>
-                                                            <Copy size={18} className="text-neutral-300 cursor-pointer" />
+                                                            <Copy size={18} className="text-neutral-300 cursor-pointer" onClick={() => handleCopy(paymentData?.code)} />
                                                         </div>
                                                     </div>
                                                 ) : (

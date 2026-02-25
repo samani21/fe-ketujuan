@@ -139,11 +139,13 @@ const DetailPending = ({ invoice, onBack, fetchOrders }: { invoice: OrdersType, 
 
                     <div className="bg-neutral-50 rounded-2xl p-4 border border-neutral-100 flex items-center justify-between">
                         <div>
-                            <p className="text-[10px] text-neutral-400 font-bold uppercase">{invoice?.payment_method == 'va_mandiri' ? "Virtual Akun Mandiri" : "Transfer " + invoice?.payment_method}</p>
-                            <p className="text-sm font-black text-neutral-800">{invoice?.payment_destination}</p>
+                            <p className="text-[10px] text-neutral-400 font-bold uppercase">{invoice?.client_order?.payment_method == 'transfer_bank' ? "Transfer Bank" :
+                                invoice?.client_order?.payment_method == 'qris' ? "Qris" :
+                                    invoice?.client_order?.payment_method == 'virtual_account' ? "Virtual Account" : ""} {invoice?.client_order?.payment_channel} ({invoice?.client_order?.account_name})</p>
+                            <p className="text-sm font-black text-neutral-800">{invoice?.client_order?.payment_destination}</p>
                         </div>
                         <button
-                            onClick={() => handleCopy(invoice?.payment_destination)}
+                            onClick={() => handleCopy(invoice?.client_order?.payment_destination)}
                             className="p-2 text-neutral-400 hover:text-[var(--primary-color)] transition-colors"
                         >
                             <Copy size={16} />
@@ -164,7 +166,7 @@ const DetailPending = ({ invoice, onBack, fetchOrders }: { invoice: OrdersType, 
                             <span className="text-[var(--primary-color)]">{formatIDR(invoice?.total_price)}</span>
                         </div>
                     </div>
-                    <img src={imageProof || invoice?.payment_proof_url} className='rounded-md' />
+                    <img src={imageProof || invoice?.client_order?.payment_proof_url} className='rounded-md' />
                 </section>
 
                 {/* Bantuan */}
@@ -179,7 +181,7 @@ const DetailPending = ({ invoice, onBack, fetchOrders }: { invoice: OrdersType, 
                 </div>
             </main>
             {/* Floating Action (If Pending) */}
-            {invoice.status === 'pending' && invoice?.payment_method != 'va_mandiri' && (
+            {invoice.status === 'pending' && invoice?.client_order?.payment_method != 'va_mandiri' && (
                 <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/80 backdrop-blur-lg border-t border-neutral-100 max-w-md mx-auto z-20">
                     <input
                         type="file"

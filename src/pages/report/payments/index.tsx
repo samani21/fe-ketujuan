@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react'
 import { Column } from '@/Components/Component/CRUD/Type';
 import { Delete, Get, Post } from '@/utils/apiWithToken';
 import Notification from '@/Components/Component/Notification';
-import { OrdersType } from '@/types/Client/Orders';
+import { ClientOrderType } from '@/types/Client/ClientOrders';
 
 const statusConfig: any = {
     pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-700 border-yellow-200' }, // Tambahan ini
@@ -19,11 +19,10 @@ const statusConfig: any = {
 
 const PaymentsPage = () => {
     const [modalType, setModalType] = useState<string | null>(null);
-    const [dataOrders, setDataOrders] = useState<OrdersType[]>([])
+    const [dataOrders, setDataOrders] = useState<ClientOrderType[]>([])
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState<number>(1)
     const [debouncedSearch, setDebouncedSearch] = useState<string>('');
-    const [data, setData] = useState<OrdersType | null>(null);
     const [lastPage, setLastPage] = useState<number>(1);
     const [countData, setCountData] = useState<number>(1);
     const [showNotif, setShowNotif] = useState<any>({
@@ -39,39 +38,39 @@ const PaymentsPage = () => {
     }, [debouncedSearch, currentPage]);
 
 
-    const columnTable: Column<OrdersType>[] = [
+    const columnTable: Column<ClientOrderType>[] = [
 
         {
             header: "Invoice",
             key: "order_number",
         },
         {
-            header: "Subtotal",
-            key: "subtotal",
-            type: 'rupiah'
-        },
-        {
             header: "Shipping Cost",
-            key: "shipping_cost",
-            type: 'rupiah'
-        },
-        {
-            header: "Total Price",
-            key: "total_price",
+            key: "amount",
             type: 'rupiah'
         },
         {
             header: "Payment Method",
             key: "payment_method",
-            render: (row) => row?.payment_method == 'va_mandiri' ? "Virtual Account Mandiri" : "Transfer " + row?.payment_method.toUpperCase()
+            render: (row) => row?.payment_method == 'transfer_bank' ? "Transfer Bank" :
+                row?.payment_method == 'qris' ? "Qris" :
+                    row?.payment_method == 'virtual_account' ? "Virtual Account" : ""
+        },
+        {
+            header: "Payment Channel",
+            key: "payment_channel",
         },
         {
             header: "Payment Code",
             key: "payment_destination",
         },
         {
-            header: "Approve",
-            key: "approve_at",
+            header: "Account Name",
+            key: "account_name",
+        },
+        {
+            header: "Paid At",
+            key: "paid_at",
         },
         {
             header: "Status",
@@ -87,31 +86,12 @@ const PaymentsPage = () => {
                 );
             }
         },
-        {
-            header: "Action",
-            type: "custom",
-            render: (row) => (
-                <div className="flex justify-center gap-2 opacity-90 group-hover:opacity-100">
-                    <button onClick={() => {
-                        setModalType('order')
-                        setData(row)
-                    }}>
-                        <BookText size={16} />
-                    </button>
-                    <button onClick={() => {
-                        setModalType('edit')
-                        setData(row)
-                    }}>
-                        <Edit2 size={16} />
-                    </button>
-                </div>
-            )
-        }
+
     ]
 
     const getOrder = async () => {
         try {
-            const res = await Get<{ status: string, data: any }>(`/v1/front/orders?page=${currentPage}&per_page=10&search=${debouncedSearch}&status=paid`);
+            const res = await Get<{ status: string, data: any }>(`/v1/payments?page=${currentPage}&per_page=10&search=${debouncedSearch}&status=paid`);
             if (res?.status === 'success') {
                 setDataOrders(res?.data?.data)
                 setLastPage(res?.data?.last_page)
@@ -126,7 +106,7 @@ const PaymentsPage = () => {
     return (
         <LayoutAdmin>
             <div className='space-y-4'>
-                <HeaderCrud title={"List Orders"}
+                <HeaderCrud title={"List Paymentex"}
                     // subtitle={"Kelola list kategori"}
                     setModalType={setModalType}
                     debouncedSearch={debouncedSearch}
@@ -143,17 +123,6 @@ const PaymentsPage = () => {
                     countData={countData}
                 />
 
-                {/* {
-                    modalType === 'add' || modalType === 'edit' ?
-                        <ExampleFormInput modalType={modalType} closeModal={() => {
-                            setModalType(null)
-                            setData(null)
-                        }} handleSubmit={handleSubmit} data={data} /> :
-                        <ExampleDelete modalType={modalType} closeModal={() => {
-                            setModalType(null)
-                            setData(null)
-                        }} data={data} handleDelete={(v) => handleDelete()} />
-                } */}
 
             </div>
             {

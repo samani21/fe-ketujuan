@@ -12,6 +12,7 @@ export interface OrdersType {
     id: number;
     client_id: number;
     order_number: string;
+    customer?: string;
     client_user_id: number;
     subtotal: number;
     shipping_cost: number;
