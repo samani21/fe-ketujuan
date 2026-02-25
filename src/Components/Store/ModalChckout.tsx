@@ -14,9 +14,9 @@ interface BanksType {
 }
 
 const BANKS = [
-    { code: "bca", name: "BCA", accountName: "PureEats Jakarta", accountNumber: "8830 1234 5678" },
-    { code: "bni", name: "BNI", accountName: "PureEats Jakarta", accountNumber: "0099 8765 4321" },
-    { code: "bri", name: "BRI", accountName: "PureEats Jakarta", accountNumber: "1234 5678 9012" },
+    { code: "BCA", name: "BCA", accountName: "PureEats Jakarta", accountNumber: "883012345678" },
+    { code: "BNI", name: "BNI", accountName: "PureEats Jakarta", accountNumber: "009987654321" },
+    { code: "BRI", name: "BRI", accountName: "PureEats Jakarta", accountNumber: "123456789012" },
 ];
 
 const SHIPPING_COST = 10000;
@@ -108,7 +108,7 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
         }
     };
 
-    const handleCheckout = async (methodType: string, accountNumber?: string) => {
+    const handleCheckout = async (methodType: string, paymentChennel: string, accountNumber?: string, nameAccount?: string) => {
         setIsLoading(true);
 
         try {
@@ -118,10 +118,11 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
             formData.append('shipping_cost', String(SHIPPING_COST));
             formData.append('total_price', String(cartTotal + SHIPPING_COST));
             formData.append('payment_method', methodType);
-
-            if (methodType !== 'va_mandiri') {
-                formData.append('payment_destination', String(accountNumber));
+            formData.append('payment_channel', paymentChennel);
+            if (nameAccount) {
+                formData.append('account_name', nameAccount);
             }
+            formData.append('payment_destination', String(accountNumber));
 
             if (selectedFile) {
                 formData.append('payment_proof', selectedFile);
@@ -299,7 +300,7 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
                                                     <button
                                                         key={bank.code}
                                                         onClick={() => {
-                                                            handleCheckout(bank?.code, bank?.accountNumber)
+                                                            handleCheckout('transfer_bank', bank?.code, bank?.accountNumber, bank?.accountName)
                                                             setSelectedBankCode(bank)
                                                         }}
                                                         className={`p-3 rounded-xl border text-xs font-bold transition ${selectedBankCode?.code === bank.code ? "border-[var(--primary-color)] bg-[var(--primary-color)]/5 text-[var(--primary-color)]" : "border-neutral-100 text-neutral-400"}`}
@@ -359,7 +360,7 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
                                                         <p className="text-xs text-neutral-400 mb-4">Pembayaran akan diproses otomatis via VA</p>
                                                         <button
                                                             disabled={isLoading}
-                                                            onClick={() => handleCheckout('va_mandiri')}
+                                                            onClick={() => handleCheckout('virtual_account', "Mandiri")}
                                                             className="w-full p-4 rounded-xl border-2 border-[var(--primary-color)] text-[var(--primary-color)] font-black text-xs hover:bg-[var(--primary-color)] hover:text-white transition-all"
                                                         >
                                                             {isLoading ? 'GENERATING...' : 'DAPATKAN NOMOR VA'}
@@ -395,8 +396,9 @@ const ModalCheckoutStore = ({ isCheckoutOpen, setIsCheckoutOpen, cart, updateQty
                         )}
                     </motion.div>
                 </div>
-            )}
-        </AnimatePresence>
+            )
+            }
+        </AnimatePresence >
     );
 };
 

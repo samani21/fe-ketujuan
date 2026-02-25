@@ -40,6 +40,11 @@ export default function ProductPage() {
         fetchProducts();
         fetchCarts();
     }, []);
+    useEffect(() => {
+        if (cart?.length === 0) {
+            fetchProducts();
+        }
+    }, [cart]);
     /*
     |--------------------------------------------------------------------------
     | Sync Stock + Debounce API Cart
@@ -68,6 +73,7 @@ export default function ProductPage() {
     */
 
     const addToCart = (product: ProductType) => {
+        fetchProducts();
         setCart(prev => {
             const exist = prev.find(i => i.id === product.id);
 
@@ -90,7 +96,7 @@ export default function ProductPage() {
                     if (i.id !== id) return i;
 
                     const newQty = Math.max(0, (i.qty ?? 0) + delta);
-                    return { ...i, qty: originalMap[i.id], soldout: soldOut };
+                    return { ...i, qty: soldOut ? originalMap[i.id] : newQty, soldout: soldOut };
                 })
                 .filter(i => (i.qty ?? 0) > 0);
 

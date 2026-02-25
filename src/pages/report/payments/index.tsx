@@ -7,8 +7,6 @@ import { Column } from '@/Components/Component/CRUD/Type';
 import { Delete, Get, Post } from '@/utils/apiWithToken';
 import Notification from '@/Components/Component/Notification';
 import { OrdersType } from '@/types/Client/Orders';
-import OrderDetailModal from './Modals/OrderDetailModal';
-import UpdateOrders from './Modals/UpdateOrders';
 
 const statusConfig: any = {
     pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-700 border-yellow-200' }, // Tambahan ini
@@ -19,7 +17,7 @@ const statusConfig: any = {
     paid: { label: 'Paid', color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
 };
 
-const OrdersPage = () => {
+const PaymentsPage = () => {
     const [modalType, setModalType] = useState<string | null>(null);
     const [dataOrders, setDataOrders] = useState<OrdersType[]>([])
     const [loading, setLoading] = useState(false);
@@ -65,14 +63,15 @@ const OrdersPage = () => {
         {
             header: "Payment Method",
             key: "payment_method",
-            render: (row) => row?.client_order?.payment_method == 'virtual_account' ?
-                "Virtual Account " + row?.client_order?.payment_channel :
-                "Transfer " + row?.client_order.payment_channel
+            render: (row) => row?.payment_method == 'va_mandiri' ? "Virtual Account Mandiri" : "Transfer " + row?.payment_method.toUpperCase()
         },
         {
             header: "Payment Code",
             key: "payment_destination",
-            render: (row) => (row?.client_order?.payment_destination)
+        },
+        {
+            header: "Approve",
+            key: "approve_at",
         },
         {
             header: "Status",
@@ -112,7 +111,7 @@ const OrdersPage = () => {
 
     const getOrder = async () => {
         try {
-            const res = await Get<{ status: string, data: any }>(`/v1/front/orders?page=${currentPage}&per_page=10&search=${debouncedSearch}`);
+            const res = await Get<{ status: string, data: any }>(`/v1/front/orders?page=${currentPage}&per_page=10&search=${debouncedSearch}&status=paid`);
             if (res?.status === 'success') {
                 setDataOrders(res?.data?.data)
                 setLastPage(res?.data?.last_page)
@@ -123,39 +122,6 @@ const OrdersPage = () => {
         }
     }
 
-    const handleUpdateStatus = async (id: number, status: string) => {
-        try {
-            const formData = new FormData();
-            formData.append('status', status);
-            if (status === "paid") {
-                formData.append(
-                    'approve_at',
-                    new Date().toLocaleString('sv-SE').replace('T', ' ')
-                );
-            }
-            const res = await Post<any, FormData>(`/v1/orders/${id}`, formData);
-            if (res?.status == "success") {
-                {
-                    setModalType(null)
-                    setData(null)
-                };
-                getOrder();
-                setShowNotif({
-                    message: res?.message,
-                    type: res?.status,
-                    isOpen: true
-                })
-            }
-        } catch (e) {
-            setShowNotif({
-                message: "Gagal proses",
-                type: "error",
-                isOpen: true
-
-            })
-        }
-
-    }
 
     return (
         <LayoutAdmin>
@@ -188,18 +154,7 @@ const OrdersPage = () => {
                             setData(null)
                         }} data={data} handleDelete={(v) => handleDelete()} />
                 } */}
-                {
-                    modalType === 'order' ?
-                        <OrderDetailModal closeModal={() => {
-                            setModalType(null)
-                            setData(null)
-                        }}
-                            data={data} handleUpdateStatus={handleUpdateStatus} /> :
-                        <UpdateOrders modalType={modalType} closeModal={() => {
-                            setModalType(null)
-                            setData(null)
-                        }} handleSubmit={handleUpdateStatus} data={data} />
-                }
+
             </div>
             {
                 showNotif?.isOpen &&
@@ -209,4 +164,4 @@ const OrdersPage = () => {
     )
 }
 
-export default OrdersPage
+export default PaymentsPage

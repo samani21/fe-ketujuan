@@ -122,7 +122,7 @@ const OrderDetailModal = ({ closeModal, data, handleUpdateStatus }: Props) => {
                             <div className="flex items-center gap-2 mb-2 text-gray-500 font-semibold text-xs uppercase tracking-wider">
                                 <CreditCard size={14} /> Metode Pembayaran
                             </div>
-                            <p className="text-gray-900 font-bold">{data?.payment_method == 'va_mandiri' ? "Virtual Account Mandiri" : "Transfer " + data?.payment_method.toUpperCase()}</p>
+                            <p className="text-gray-900 font-bold">{data?.client_order?.payment_method == 'virtual_account' ? "Virtual Account " : "Transfer "}{data?.client_order?.payment_channel}</p>
                         </div>
                         <div className="p-4 rounded-xl border border-gray-100 bg-gray-50/50">
                             <div className="flex items-center gap-2 mb-2 text-gray-500 font-semibold text-xs uppercase tracking-wider">
@@ -194,15 +194,15 @@ const OrderDetailModal = ({ closeModal, data, handleUpdateStatus }: Props) => {
                             {/* Payment Evidence */}
                             <div className="p-5 border border-gray-100 rounded-3xl bg-gray-50/30 space-y-4">
                                 <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Bukti Transfer</h4>
-                                {data?.payment_proof_url ? (
+                                {data?.client_order.payment_proof_url ? (
                                     <div className="group relative rounded-2xl overflow-hidden aspect-[4/3] bg-white border border-gray-200 shadow-sm">
                                         <img
-                                            src={data?.payment_proof_url}
+                                            src={data?.client_order?.payment_proof_url}
                                             alt="Proof"
                                             className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all"
                                         />
                                         <div className="absolute inset-0 bg-indigo-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                            <button onClick={() => window.open(data?.payment_proof_url, '_blank')} className="bg-white text-gray-900 px-4 py-2 rounded-xl text-xs font-black shadow-xl flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                                            <button onClick={() => window.open(data?.client_order?.payment_proof_url, '_blank')} className="bg-white text-gray-900 px-4 py-2 rounded-xl text-xs font-black shadow-xl flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-transform">
                                                 <ExternalLink size={14} /> LIHAT DETAIL
                                             </button>
                                         </div>
@@ -216,7 +216,7 @@ const OrderDetailModal = ({ closeModal, data, handleUpdateStatus }: Props) => {
                                 <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm">
                                     <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Kode Bayar</p>
                                     <p className="text-xs font-mono font-black text-[var(--primary-color)] truncate">
-                                        {data?.payment_destination || '-'}
+                                        {data?.client_order?.payment_destination || '-'}
                                     </p>
                                 </div>
                             </div>
