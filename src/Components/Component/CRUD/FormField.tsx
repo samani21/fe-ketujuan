@@ -1,3 +1,4 @@
+import { Eye, EyeOff } from 'lucide-react';
 import React from 'react'
 
 type Option = {
@@ -50,7 +51,7 @@ const FormField = ({
     const [open, setOpen] = React.useState(false);
 
     const selectedLabel = options.find(opt => opt.value === value)?.label || '';
-
+    const [showPassword, setShowPassword] = React.useState(false);
     const filteredOptions = options.filter(opt =>
         opt.label.toLowerCase().includes(search.toLowerCase())
     );
@@ -167,17 +168,34 @@ const FormField = ({
             )}
 
             {/* INPUT */}
-            {!['select', 'textarea', 'checkbox', 'switch', 'image', 'autocomplete'].includes(type)
-                && (
+            {!['select', 'textarea', 'checkbox', 'switch', 'image', 'autocomplete'].includes(type) && (
+                <div className="relative">
                     <input
-                        type={type === 'rupiah' ? 'text' : type}
+                        type={
+                            type === 'rupiah'
+                                ? 'text'
+                                : type === 'password'
+                                    ? (showPassword ? 'text' : 'password')
+                                    : type
+                        }
                         disabled={disabled}
                         required={required}
                         value={type === 'rupiah' ? formatRupiah(value) : value}
                         onChange={type === 'rupiah' ? handleRupiah : handleInput}
                         className={baseClass}
                     />
-                )}
+
+                    {type === 'password' && (
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500"
+                        >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    )}
+                </div>
+            )}
             {type === "image" && (
                 <div className="space-y-3">
                     <input

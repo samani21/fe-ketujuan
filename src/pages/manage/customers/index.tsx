@@ -90,9 +90,14 @@ const CustomersPage = () => {
 
     const handleSubmit = async (form: any) => {
         try {
-
+            const formData = new FormData();
+            formData.append('name', form.name)
+            formData.append('email', form.email + `@${storeInfo?.subdomain}.net`)
+            formData.append('phone_number', form.phone_number)
+            formData.append('password', form.password)
+            formData.append('role', "customer")
             if (data) {
-                const res = await Post<any, FormData>(`/v1/client-user/${data?.id}`, form);
+                const res = await Post<any, FormData>(`/v1/client-user/${data?.id}`, formData);
                 if (res?.status == "success") {
                     {
                         setModalType(null)
@@ -106,7 +111,7 @@ const CustomersPage = () => {
                     })
                 }
             } else {
-                const res = await Post<any, FormData>('/v1/client-user', form);
+                const res = await Post<any, FormData>('/v1/client-user', formData);
                 if (res?.status == "success") {
                     {
                         setModalType(null)
@@ -120,9 +125,9 @@ const CustomersPage = () => {
                     })
                 }
             }
-        } catch (e) {
+        } catch (e: any) {
             setShowNotif({
-                message: "Gagal proses",
+                message: e?.message || "Gagal proses",
                 type: "error",
                 isOpen: true
 

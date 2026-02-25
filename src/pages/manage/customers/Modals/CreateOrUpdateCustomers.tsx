@@ -28,6 +28,7 @@ const CreateOrUpdateCustomers = ({ modalType, closeModal, handleSubmit, data, st
         password: "",
         name: "",
         email: "",
+        role: "customer",
     });
 
     useEffect(() => {
@@ -57,8 +58,7 @@ const CreateOrUpdateCustomers = ({ modalType, closeModal, handleSubmit, data, st
         setIsLoading(true)
 
         handleSubmit(form)
-        console.log(form)
-        // setIsLoading(false)
+        setIsLoading(false)
     }
     const getProducts = async () => {
         try {
@@ -88,7 +88,12 @@ const CreateOrUpdateCustomers = ({ modalType, closeModal, handleSubmit, data, st
 
                     <FormField label="name" name="name" type="text" value={form.name} onChange={update} disabled={isLoading} required />
                     <FormField label="Phone Number" name="phone_number" type="text" value={form.phone_number} onChange={update} disabled={isLoading} />
-                    <FormField label="email" name="email" type="email" value={form.email} onChange={update} disabled={modalType === 'add' ? isLoading : true} required />
+                    <div className="flex items-center">
+                        <FormField label="email" name="email" type="text" value={form.email} onChange={update} disabled={modalType === 'add' ? isLoading : true} required />
+                        <div className="mt-6">
+                            <FormField label="" name="mail" type="text" value={`@${storeInfo?.subdomain}.net`} onChange={update} disabled={true} />
+                        </div>
+                    </div>
                     <FormField label="password" name="password" type="password" value={form.password} onChange={update} disabled={isLoading} />
                     {
                         modalType === 'add' ?
